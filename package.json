@@ -10,14 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"onCommand:tromp.runTest"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "tromp.runTest",
+				"title": "Tromp: run test"
 			}
 		]
 	},
@@ -30,14 +30,21 @@
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
+		"@types/minimatch": "^3.0.3",
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.11.7",
 		"@types/vscode": "^1.40.0",
-		"glob": "^7.1.5",
+		"glob": "^7.1.6",
 		"mocha": "^6.2.2",
 		"prettier": "^1.19.1",
 		"tslint": "^5.20.0",
 		"typescript": "^3.6.4",
 		"vscode-test": "^1.2.2"
+	},
+	"dependencies": {
+		"alternate-file": "^0.2.6",
+		"fp-ts": "^2.1.2",
+		"io-ts": "^2.0.1",
+		"minimatch": "^3.0.4"
 	}
 }
