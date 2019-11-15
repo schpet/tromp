@@ -16,15 +16,19 @@ export function activate(context: vscode.ExtensionContext) {
     "extension.helloWorld",
     () => {
       // The code you place here will be executed every time your command is executed
-
-      // Display a message box to the user
-      vscode.window.showInformationMessage("Hello lovely World!")
-      // const filePath = editor.document.fileName;
       const editor = vscode.window.activeTextEditor
       if (!editor) {
         vscode.window.showErrorMessage("no editor :(")
         return
       }
+
+      const terminal =
+        vscode.window.activeTerminal || vscode.window.createTerminal("tromp")
+
+      terminal.show(true)
+
+      const { fileName } = editor.document
+      terminal.sendText(`yarn test ${fileName}`)
     }
   )
 
