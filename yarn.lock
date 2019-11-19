@@ -287,7 +287,7 @@ flat@^4.1.0:
   dependencies:
     is-buffer "~2.0.3"
 
-fp-ts@^2.1.2:
+fp-ts@^2.0.2, fp-ts@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.1.2.tgz#6acab50af1ac5044ebd6e6c38d83e3b5905a7982"
   integrity sha512-oOZ/gc+lxTSfKRk6vnAAie2HQTWMH7yhaIM0+gW8fAi4JAiPT/OmEpW5ps3VuapPGNqnZ++4p56hv3PEd1qUFg==
@@ -387,7 +387,15 @@ inherits@2:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-io-ts@^2.0.1:
+io-ts-reporters@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/io-ts-reporters/-/io-ts-reporters-1.0.0.tgz#c5901d49d454956698bbca48b328698f8ca1c9c7"
+  integrity sha512-jjMvTnFYYxX3ue3cajmqCAf7sM4+lFvaaUuAL+otJv2DE+WDxYvQeCcUYveoq37rVSftJHZBEOrnvz3x0VdRXA==
+  dependencies:
+    fp-ts "^2.0.2"
+    io-ts "^2.0.0"
+
+io-ts@^2.0.0, io-ts@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.0.1.tgz#1261c12f915c2f48d16393a36966636b48a45aa1"
   integrity sha512-RezD+WcCfW4VkMkEcQWL/Nmy/nqsWTvTYg7oUmTGzglvSSV2P9h2z1PVeREPFf0GWNzruYleAt1XCMQZSg1xxQ==

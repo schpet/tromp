@@ -1,7 +1,7 @@
 {
 	"name": "tromp",
 	"displayName": "tromp",
-  "publisher": "schpet",
+	"publisher": "schpet",
 	"description": "run tests based on projections.json file",
 	"version": "0.0.1",
 	"engines": {
@@ -46,6 +46,7 @@
 		"alternate-file": "^0.2.6",
 		"fp-ts": "^2.1.2",
 		"io-ts": "^2.0.1",
+		"io-ts-reporters": "^1.0.0",
 		"minimatch": "^3.0.4"
 	}
 }
