@@ -65,10 +65,10 @@ export async function runTest() {
     terminal.sendText(`${command.command} ${command.targetFsPathRelative}`)
   } catch (e) {
     if (e instanceof Error) {
-      vscode.window.showErrorMessage(e.message)
+      vscode.window.showErrorMessage(`Tromp: ${e.message}`)
     } else {
       vscode.window.showErrorMessage(
-        `unknown error: ${JSON.stringify(e, null, 2)}`
+        `Tromp: unknown error ${JSON.stringify(e, null, 2)}`
       )
     }
   }
