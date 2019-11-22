@@ -1,0 +1,27 @@
+{
+  "title": "TrompConfig",
+  "type": "object",
+  "properties": {
+    "commands": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/commands" }
+    }
+  },
+  "required": ["commands"],
+  "definitions": {
+    "commands": {
+      "type": "object",
+      "required": ["command", "match"],
+      "properties": {
+        "command": {
+          "title": "command to run",
+          "type": "string"
+        },
+        "match": {
+          "title": "glob match based on minimatch",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
