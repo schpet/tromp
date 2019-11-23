@@ -2,11 +2,13 @@
   "name": "tromp",
   "displayName": "tromp",
   "publisher": "schpet",
-  "description": "TODO: write description",
+  "description": "run tests and arbitrary commands based on the file open",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.40.0"
   },
+  "license": "MIT",
+  "repository": "github:schpet/tromp",
   "categories": [
     "Other"
   ],
