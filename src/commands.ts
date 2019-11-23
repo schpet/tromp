@@ -2,6 +2,7 @@ import * as vscode from "vscode"
 import { getCommand, readConfigFromFs } from "./trompConfig"
 import * as path from "path"
 import { failure, success } from "./Result"
+import * as lineArguments from "./lineArguments"
 
 function showErrorMessage(message: string, prefix = "Tromp: ") {
   vscode.window.showErrorMessage(`${prefix}${message}`)
@@ -32,63 +33,23 @@ export async function runCommandWithLine(context: vscode.ExtensionContext) {
     return
   }
 
-  const laMapping = {
-    rspec: rspecLineArgument,
-    jest: jestLineArgument,
-  } as const
-
-  const lineArgument = laMapping[command.mode](editor, command.file)
-
-  runTerminalCommand(`${command.command} ${lineArgument}`, context)
-}
-
-function rspecLineArgument(editor: vscode.TextEditor, file: string) {
-  return `${file}:${editor.selection.start.line}`
-}
-
-const TEST_NAME_REGEX = /(describe|it|test)\(("([^"]+)"|`([^`]+)`|'([^']+)'),/
-
-function jestLineArgument(editor: vscode.TextEditor, file: string) {
-  // https://github.com/firsttris/vscode-jest-runner/blob/master/src/jestRunner.ts
-  const testName = findCurrentTestName(editor)
-  return `${file} -t '${testName}'`
-}
-
-/**
- * TODO:
- * check for tests with quotes e.g. `has 'single quotes`
- *
- * copied from
- * https://github.com/firsttris/vscode-jest-runner/blob/master/src/jestRunner.ts
- * MIT Copyright (c) 2017 Tristan Teufel
- */
-function findCurrentTestName(editor: vscode.TextEditor): string {
-  // from selection
-  const { selection, document } = editor
-  if (!selection.isEmpty) {
-    return removeFirstAndLastChars(document.getText(selection))
+  const getLine = (line: number) => {
+    return editor.document.lineAt(line).text
   }
 
-  // from cursor position
-  for (
-    let currentLine = selection.active.line;
-    currentLine >= 0;
-    currentLine--
-  ) {
-    const text = document.getText(
-      new vscode.Range(currentLine, 0, currentLine, 100000)
-    )
-    const match = TEST_NAME_REGEX.exec(text)
-    if (match) {
-      return removeFirstAndLastChars(match[2])
-    }
+  const lineArgumentFn = lineArguments[command.mode]
+  const lineArgument = lineArgumentFn({
+    file: command.file,
+    line: editor.selection.active.line,
+    getLine,
+  })
+
+  if (!lineArgument.ok) {
+    showErrorMessage(lineArgument.reason)
+    return
   }
 
-  return ""
-}
-
-function removeFirstAndLastChars(s: string): string {
-  return s.slice(1, -1)
+  runTerminalCommand(`${command.command} ${lineArgument.value}`, context)
 }
 
 export async function runCommandWithFile(context: vscode.ExtensionContext) {

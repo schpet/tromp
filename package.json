@@ -59,6 +59,7 @@
     "@types/minimatch": "^3.0.3",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.11.7",
+    "@types/shell-quote": "^1.6.1",
     "@types/vscode": "^1.40.0",
     "glob": "^7.1.6",
     "jest": "^24.9.0",
@@ -73,6 +74,7 @@
   "dependencies": {
     "ajv": "^6.10.2",
     "alternate-file": "^0.2.6",
-    "minimatch": "^3.0.4"
+    "minimatch": "^3.0.4",
+    "shell-quote": "^1.7.2"
   }
 }

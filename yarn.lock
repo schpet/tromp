@@ -395,6 +395,11 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-1.18.4.tgz#40bebad38700a2f785940f01bdc067276fd2f7b8"
   integrity sha512-03H3ZfaayhhSwcE8YfYd2OWlUK2IaJYQO/7Q5DjhaU2PQw8OSoH/dl6dxdhTyA32aBg4+k+1EOCqb8czIeVY6Q==
 
+"@types/shell-quote@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@types/shell-quote/-/shell-quote-1.6.1.tgz#eed0cd93ac3628427d7b44c4550f854f9400e39f"
+  integrity sha512-t0bxRLQ75MMF7EeICa1eYC//o1/6gPaUV7ELke4l4OkwpZ9apOzvv2oR5F2PmQJ3tM83Lo+MNKfAXn5gQRMcnA==
+
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
@@ -3421,6 +3426,11 @@ shebang-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-1.0.0.tgz#da42f49740c0b42db2ca9728571cb190c98efea3"
   integrity sha1-2kL0l0DAtC2yypcoVxyxkMmO/qM=
+
+shell-quote@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
+  integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
 
 shellwords@^0.1.1:
   version "0.1.1"
