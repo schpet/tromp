@@ -36,7 +36,6 @@ export async function runCommandWithLine(context: vscode.ExtensionContext) {
     rspec: rspecLineArgument,
     jest: jestLineArgument,
   } as const
-  console.log(`la====`, command.mode)
 
   const lineArgument = laMapping[command.mode](editor, command.file)
 
@@ -51,15 +50,23 @@ const TEST_NAME_REGEX = /(describe|it|test)\(("([^"]+)"|`([^`]+)`|'([^']+)'),/
 
 function jestLineArgument(editor: vscode.TextEditor, file: string) {
   // https://github.com/firsttris/vscode-jest-runner/blob/master/src/jestRunner.ts
-  const x = findCurrentTestName(editor)
-  return `${file} -t '${x}'`
+  const testName = findCurrentTestName(editor)
+  return `${file} -t '${testName}'`
 }
 
+/**
+ * TODO:
+ * check for tests with quotes e.g. `has 'single quotes`
+ *
+ * copied from
+ * https://github.com/firsttris/vscode-jest-runner/blob/master/src/jestRunner.ts
+ * MIT Copyright (c) 2017 Tristan Teufel
+ */
 function findCurrentTestName(editor: vscode.TextEditor): string {
   // from selection
   const { selection, document } = editor
   if (!selection.isEmpty) {
-    return unquote(document.getText(selection))
+    return removeFirstAndLastChars(document.getText(selection))
   }
 
   // from cursor position
@@ -73,15 +80,14 @@ function findCurrentTestName(editor: vscode.TextEditor): string {
     )
     const match = TEST_NAME_REGEX.exec(text)
     if (match) {
-      return unquote(match[2])
+      return removeFirstAndLastChars(match[2])
     }
   }
 
   return ""
 }
 
-function unquote(s: string): string {
-  // TODO
+function removeFirstAndLastChars(s: string): string {
   return s.slice(1, -1)
 }
 

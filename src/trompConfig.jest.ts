@@ -19,7 +19,7 @@ describe(`decodeConfig`, () => {
     expect(result.ok).toBe(true)
   })
 
-  it(`doesn't accept invalid json`, () => {
+  it(`doesnt accept invalid json`, () => {
     const config = `{ foo: "bar" }`
 
     const result = decodeConfig(config)

@@ -14,7 +14,7 @@
     "onCommand:tromp.runCommand",
     "onCommand:tromp.runCommandWithFile",
     "onCommand:tromp.runCommandWithLine",
-    "onCommand:tromp.runPreviousCommand",
+    "onCommand:tromp.runPreviousCommand"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -50,7 +50,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile",
     "test": "node ./out/test/runCommand.js",
-    "schema": "json2ts src/trompSchema.json src/types/trompSchema.d.ts"
+    "schema": "json2ts src/trompSchema.json src/types/trompSchema.d.ts",
+    "install": "vsce package && code --install-extension tromp-0.0.1.vsix"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
