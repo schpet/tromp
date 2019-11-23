@@ -10,10 +10,8 @@ export type GlobMatchBasedOnMinimatch = string;
 
 export interface TrompConfig {
   commands: Commands[];
-  [k: string]: any;
 }
 export interface Commands {
   command: CommandToRun;
   match: GlobMatchBasedOnMinimatch;
-  [k: string]: any;
 }

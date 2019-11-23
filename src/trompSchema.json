@@ -1,6 +1,7 @@
 {
   "title": "TrompConfig",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
     "commands": {
       "type": "array",
@@ -11,6 +12,7 @@
   "definitions": {
     "commands": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["command", "match"],
       "properties": {
         "command": {
