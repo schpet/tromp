@@ -15,4 +15,5 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-
     - run: yarn install
+    - run: yarn format-check
     - run: yarn jest
