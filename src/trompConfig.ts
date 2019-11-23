@@ -1,13 +1,11 @@
-import * as Ajv from "ajv"
+import Ajv from "ajv"
+import * as alt from "alternate-file"
 import { promises as fs } from "fs"
-import * as minimatch from "minimatch"
+import minimatch from "minimatch"
+import { relative } from "path"
 import { failure, Result, success } from "./Result"
 import * as trompSchema from "./trompSchema.json"
-import { TrompConfig, Commands } from "./types/trompSchema.js"
-import * as alt from "alternate-file"
-import * as path from "path"
-import { relative } from "path"
-import { Command } from "vscode"
+import { Commands, TrompConfig } from "./types/trompSchema.js"
 
 export function findCommand(
   trompConfig: TrompConfig,
