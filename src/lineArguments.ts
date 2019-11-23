@@ -7,7 +7,7 @@ interface Args {
   getLine: (line: number) => string | undefined
 }
 
-export function rspec(args: Args) {
+export function rspec(args: Args): Result<string, string> {
   const { file, line } = args
   return success(`${file}:${line}`)
 }
@@ -31,9 +31,8 @@ export function jest(args: Args): Result<string, string> {
   if (!match) return failure("didn’t find any it, test, or describe calls")
 
   const trimmed = match.slice(1, -1)
-  const quoted = quote([trimmed])
 
-  return success(`${file} -t ${quoted}`)
+  return success(quote([file, "-t", trimmed]))
 }
 
 /**

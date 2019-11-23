@@ -3,6 +3,7 @@ import { getCommand, readConfigFromFs } from "./trompConfig"
 import * as path from "path"
 import { failure, success } from "./Result"
 import * as lineArguments from "./lineArguments"
+import { quote } from "shell-quote"
 
 function showErrorMessage(message: string, prefix = "Tromp: ") {
   vscode.window.showErrorMessage(`${prefix}${message}`)
@@ -60,7 +61,7 @@ export async function runCommandWithFile(context: vscode.ExtensionContext) {
   }
   const command = commandResult.value
 
-  runTerminalCommand(`${command.command} ${command.file}`, context)
+  runTerminalCommand(`${command.command} ${quote([command.file])}`, context)
 }
 
 export async function runPreviousCommand(context: vscode.ExtensionContext) {

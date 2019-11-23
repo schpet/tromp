@@ -47,4 +47,18 @@ describe("jest", () => {
       `"foo.spec.js -t \\"does a 'quote' and \\\\\\"dblquote\\\\\\" thing\\""`
     )
   })
+
+  it(`handles filenames with spaces`, () => {
+    const file = `it('does a thing', () => {
+        foo.bar
+    `
+    const result = jest({
+      file: "foo bar.spec.js",
+      line: 1,
+      getLine: getLine(file),
+    })
+
+    expect(result.ok).toBe(true)
+    expect(result.ok && result.value).toBe(`'foo bar.spec.js' -t 'does a thing'`)
+  })
 })
