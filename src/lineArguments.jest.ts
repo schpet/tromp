@@ -59,6 +59,8 @@ describe("jest", () => {
     })
 
     expect(result.ok).toBe(true)
-    expect(result.ok && result.value).toBe(`'foo bar.spec.js' -t 'does a thing'`)
+    expect(result.ok && result.value).toBe(
+      `'foo bar.spec.js' -t 'does a thing'`
+    )
   })
 })
