@@ -26,7 +26,8 @@
         "fileMatch": "tromp.json",
         "url": "./src/trompSchema.json"
       }
-    ]
+    ],
+    "taskDefinitions": []
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",

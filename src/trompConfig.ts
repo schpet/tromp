@@ -3,21 +3,19 @@ import { promises as fs } from "fs"
 import * as minimatch from "minimatch"
 import { failure, Result, success } from "./Result"
 import * as trompSchema from "./trompSchema.json"
-import { TrompConfig } from "./types/trompSchema.js"
+import { TrompConfig, Commands } from "./types/trompSchema.js"
+import * as alt from "alternate-file"
+import * as path from "path"
+import { relative } from "path"
+import { Command } from "vscode"
 
 export function findCommand(
   trompConfig: TrompConfig,
   targetFsPathRelative: string
-) {
-  const command = trompConfig.commands.find(configTestEntry =>
+): Commands | undefined {
+  return trompConfig.commands.find(configTestEntry =>
     minimatch(targetFsPathRelative, configTestEntry.match)
   )
-  if (!command) return
-
-  return {
-    ...command,
-    targetFsPathRelative,
-  }
 }
 
 export function decodeConfig(config: string): Result<TrompConfig, string> {
@@ -57,4 +55,40 @@ export async function readConfigFromFs(
   }
 
   return decodeConfig(configBuffer.toString())
+}
+
+export async function getCommand({
+  trompConfig,
+  activeFsPath,
+  rootFsPath,
+}: {
+  trompConfig: TrompConfig
+  activeFsPath: string
+  rootFsPath: string
+}): Promise<Result<{ command: Commands; file: string }, string>> {
+  const activeFsPathRelative = relative(rootFsPath, activeFsPath)
+  let [command, file] = [
+    findCommand(trompConfig, activeFsPathRelative),
+    activeFsPathRelative,
+  ]
+
+  if (!command) {
+    // file isn't a match.
+    // use projections.json to see if an alternative matches
+    // alternate-file has strange types, so casted to any
+    const alternate = (await alt.findAlternateFile(activeFsPath)) as any
+    const altFsPath: string | undefined = alternate.ok
+
+    if (altFsPath !== undefined) {
+      const altFsPathRelative = relative(rootFsPath, altFsPath)
+      command = findCommand(trompConfig, altFsPathRelative)
+      file = altFsPathRelative
+    }
+  }
+
+  if (!command) {
+    return failure(`tromp.json has no match for ${activeFsPathRelative}`)
+  }
+
+  return success({ command, file })
 }
