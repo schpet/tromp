@@ -5,15 +5,15 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type CommandToRun = string;
-export type GlobMatchBasedOnMinimatch = string;
-export type ArgumentTypeUsedForLinesDefaultsToRspec = "rspec" | "jest";
+export type CommandToRun = string
+export type GlobMatchBasedOnMinimatch = string
+export type ArgumentTypeUsedForLinesDefaultsToRspec = "rspec" | "jest"
 
 export interface TrompConfig {
-  commands: Commands[];
+  commands: Commands[]
 }
 export interface Commands {
-  command: CommandToRun;
-  match: GlobMatchBasedOnMinimatch;
-  mode?: ArgumentTypeUsedForLinesDefaultsToRspec;
+  command: CommandToRun
+  match: GlobMatchBasedOnMinimatch
+  mode?: ArgumentTypeUsedForLinesDefaultsToRspec
 }
