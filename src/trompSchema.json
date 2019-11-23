@@ -22,6 +22,10 @@
         "match": {
           "title": "glob match based on minimatch",
           "type": "string"
+        },
+        "argument": {
+          "title": "argument type used for lines, defaults to rspec",
+          "enum": ["rspec", "jest"]
         }
       }
     }

@@ -21,6 +21,14 @@
         "title": "Tromp: run command"
       },
       {
+        "command": "tromp.runCommandWithFile",
+        "title": "Tromp: run command with file as argument"
+      },
+      {
+        "command": "tromp.runCommandWithLine",
+        "title": "Tromp: run command with line as argument"
+      },
+      {
         "command": "tromp.runPreviousCommand",
         "title": "Tromp: run previous command"
       }

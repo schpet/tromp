@@ -5,7 +5,11 @@ import minimatch from "minimatch"
 import { relative } from "path"
 import { failure, Result, success } from "./Result"
 import * as trompSchema from "./trompSchema.json"
-import { Commands, TrompConfig } from "./types/trompSchema.js"
+import {
+  Commands,
+  TrompConfig,
+  LineArgumentTypeDefaultsToRspec,
+} from "./types/trompSchema.js"
 
 export function findCommand(
   trompConfig: TrompConfig,
@@ -63,7 +67,16 @@ export async function getCommand({
   trompConfig: TrompConfig
   activeFsPath: string
   rootFsPath: string
-}): Promise<Result<{ command: Commands; file: string }, string>> {
+}): Promise<
+  Result<
+    {
+      command: string
+      file: string
+      lineArgument: LineArgumentTypeDefaultsToRspec
+    },
+    string
+  >
+> {
   const activeFsPathRelative = relative(rootFsPath, activeFsPath)
   let [command, file] = [
     findCommand(trompConfig, activeFsPathRelative),
@@ -88,5 +101,7 @@ export async function getCommand({
     return failure(`tromp.json has no match for ${activeFsPathRelative}`)
   }
 
-  return success({ command, file })
+  const la = command.lineArgument || "rspec"
+
+  return success({ command: command.command, file, lineArgument: la })
 }
