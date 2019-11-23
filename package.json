@@ -39,7 +39,7 @@
     "jsonValidation": [
       {
         "fileMatch": "tromp.json",
-        "url": "./src/trompSchema.json"
+        "url": "./out/trompSchema.json"
       }
     ],
     "taskDefinitions": []
