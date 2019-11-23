@@ -11,7 +11,10 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:tromp.runCommand"
+    "onCommand:tromp.runCommand",
+    "onCommand:tromp.runCommandWithFile",
+    "onCommand:tromp.runCommandWithLine",
+    "onCommand:tromp.runPreviousCommand",
   ],
   "main": "./out/extension.js",
   "contributes": {

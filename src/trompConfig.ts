@@ -8,7 +8,7 @@ import * as trompSchema from "./trompSchema.json"
 import {
   Commands,
   TrompConfig,
-  LineArgumentTypeDefaultsToRspec,
+  ArgumentTypeUsedForLinesDefaultsToRspec,
 } from "./types/trompSchema.js"
 
 export function findCommand(
@@ -72,7 +72,7 @@ export async function getCommand({
     {
       command: string
       file: string
-      lineArgument: LineArgumentTypeDefaultsToRspec
+      mode: ArgumentTypeUsedForLinesDefaultsToRspec
     },
     string
   >
@@ -101,7 +101,7 @@ export async function getCommand({
     return failure(`tromp.json has no match for ${activeFsPathRelative}`)
   }
 
-  const la = command.lineArgument || "rspec"
+  const mode = command.mode || "rspec"
 
-  return success({ command: command.command, file, lineArgument: la })
+  return success({ command: command.command, file, mode })
 }

@@ -19,7 +19,70 @@ export async function runCommand(context: vscode.ExtensionContext) {
 }
 
 export async function runCommandWithLine(context: vscode.ExtensionContext) {
-  showErrorMessage(`TODO`)
+  const commandResult = await getCommandInContext()
+  if (!commandResult.ok) {
+    showErrorMessage(commandResult.reason)
+    return
+  }
+  const command = commandResult.value
+
+  const { activeTextEditor: editor } = vscode.window
+  if (!editor) {
+    showErrorMessage("active text editor needed")
+    return
+  }
+
+  const laMapping = {
+    rspec: rspecLineArgument,
+    jest: jestLineArgument,
+  } as const
+  console.log(`la====`, command.mode)
+
+  const lineArgument = laMapping[command.mode](editor, command.file)
+
+  runTerminalCommand(`${command.command} ${lineArgument}`, context)
+}
+
+function rspecLineArgument(editor: vscode.TextEditor, file: string) {
+  return `${file}:${editor.selection.start.line}`
+}
+
+const TEST_NAME_REGEX = /(describe|it|test)\(("([^"]+)"|`([^`]+)`|'([^']+)'),/
+
+function jestLineArgument(editor: vscode.TextEditor, file: string) {
+  // https://github.com/firsttris/vscode-jest-runner/blob/master/src/jestRunner.ts
+  const x = findCurrentTestName(editor)
+  return `${file} -t '${x}'`
+}
+
+function findCurrentTestName(editor: vscode.TextEditor): string {
+  // from selection
+  const { selection, document } = editor
+  if (!selection.isEmpty) {
+    return unquote(document.getText(selection))
+  }
+
+  // from cursor position
+  for (
+    let currentLine = selection.active.line;
+    currentLine >= 0;
+    currentLine--
+  ) {
+    const text = document.getText(
+      new vscode.Range(currentLine, 0, currentLine, 100000)
+    )
+    const match = TEST_NAME_REGEX.exec(text)
+    if (match) {
+      return unquote(match[2])
+    }
+  }
+
+  return ""
+}
+
+function unquote(s: string): string {
+  // TODO
+  return s.slice(1, -1)
 }
 
 export async function runCommandWithFile(context: vscode.ExtensionContext) {

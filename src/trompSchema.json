@@ -23,7 +23,7 @@
           "title": "glob match based on minimatch",
           "type": "string"
         },
-        "argument": {
+        "mode": {
           "title": "argument type used for lines, defaults to rspec",
           "enum": ["rspec", "jest"]
         }

@@ -7,7 +7,7 @@
 
 export type CommandToRun = string;
 export type GlobMatchBasedOnMinimatch = string;
-export type LineArgumentTypeDefaultsToRspec = "rspec" | "jest";
+export type ArgumentTypeUsedForLinesDefaultsToRspec = "rspec" | "jest";
 
 export interface TrompConfig {
   commands: Commands[];
@@ -15,5 +15,5 @@ export interface TrompConfig {
 export interface Commands {
   command: CommandToRun;
   match: GlobMatchBasedOnMinimatch;
-  lineArgument?: LineArgumentTypeDefaultsToRspec;
+  mode?: ArgumentTypeUsedForLinesDefaultsToRspec;
 }

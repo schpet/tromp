@@ -4,20 +4,25 @@ import * as vscode from "vscode"
 import * as commands from "./commands"
 
 export function activate(context: vscode.ExtensionContext) {
-  context.subscriptions.push(
-    vscode.commands.registerCommand("tromp.runCommand", () =>
-      commands.runCommand(context)
-    ),
-    vscode.commands.registerCommand("tromp.runCommandWithFile", () =>
-      commands.runCommandWithFile(context)
-    ),
-    vscode.commands.registerCommand("tromp.runCommandWithLine", () =>
-      commands.runCommandWithLine(context)
-    ),
-    vscode.commands.registerCommand("tromp.runPreviousCommand", () =>
-      commands.runPreviousCommand(context)
-    )
+  const { registerCommand } = vscode.commands
+
+  const runCommand = registerCommand("tromp.runCommand", () =>
+    commands.runCommand(context)
   )
+  const runCommandWithLine = registerCommand("tromp.runCommandWithLine", () =>
+    commands.runCommandWithLine(context)
+  )
+  const runPreviousCommand = registerCommand("tromp.runPreviousCommand", () =>
+    commands.runPreviousCommand(context)
+  )
+  const runCommandWithFile = registerCommand("tromp.runCommandWithFile", () =>
+    commands.runCommandWithFile(context)
+  )
+
+  context.subscriptions.push(runCommand)
+  context.subscriptions.push(runCommandWithFile)
+  context.subscriptions.push(runCommandWithLine)
+  context.subscriptions.push(runPreviousCommand)
 }
 
 // this method is called when your extension is deactivated
