@@ -11,14 +11,18 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:tromp.runTest"
+    "onCommand:tromp.runCommand"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "tromp.runTest",
-        "title": "Tromp: run test"
+        "command": "tromp.runCommand",
+        "title": "Tromp: run command"
+      },
+      {
+        "command": "tromp.runPreviousCommand",
+        "title": "Tromp: run previous command"
       }
     ],
     "jsonValidation": [
@@ -34,7 +38,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile",
-    "test": "node ./out/test/runTest.js",
+    "test": "node ./out/test/runCommand.js",
     "schema": "json2ts src/trompSchema.json src/types/trompSchema.d.ts"
   },
   "devDependencies": {

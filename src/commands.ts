@@ -4,7 +4,7 @@ import * as path from "path"
 
 const { showErrorMessage } = vscode.window
 
-export async function runCommand() {
+export async function runCommand(context: vscode.ExtensionContext) {
   const { workspaceFolders } = vscode.workspace
   const workspaceRoot = workspaceFolders && workspaceFolders[0]
   if (!workspaceRoot) {
@@ -40,6 +40,27 @@ export async function runCommand() {
   }
   const { command, file } = commandResult.value
 
+  const fullCommand = `${command.command} ${file}`
+  runTerminalCommand(fullCommand)
+  context.workspaceState.update(stateKeys.previousCommand, fullCommand)
+}
+
+export async function runPreviousCommand(context: vscode.ExtensionContext) {
+  const prev = context.workspaceState.get(stateKeys.previousCommand)
+  if (!prev) {
+    showErrorMessage(`Tromp: no previous command to run`)
+    return
+  }
+
+  if (typeof prev !== "string") {
+    showErrorMessage(`Tromp: unexpected type of previous command`)
+    return
+  }
+
+  runTerminalCommand(prev)
+}
+
+async function runTerminalCommand(cmd: string) {
   const terminal =
     vscode.window.activeTerminal || vscode.window.createTerminal("tromp")
 
@@ -48,5 +69,9 @@ export async function runCommand() {
   // would be nicer to keep scroll-back history
   await vscode.commands.executeCommand("workbench.action.terminal.clear")
 
-  terminal.sendText(`${command.command} ${file}`)
+  terminal.sendText(cmd)
+}
+
+enum stateKeys {
+  previousCommand = "PREVIOUS_COMMAND",
 }
