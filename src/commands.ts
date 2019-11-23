@@ -14,7 +14,7 @@ export async function runCommand() {
 
   const editor = vscode.window.activeTextEditor
   if (!editor) {
-    vscode.window.showErrorMessage(`Tromp: needs an active editor to run`)
+    showErrorMessage(`Tromp: needs an active editor to run`)
     return
   }
 
