@@ -64,10 +64,14 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
       on: {
         CONFIG_OK: {
           target: "success",
-          actions: assign({
-            comand: (_ctx: any, ev: Extract<CEvent, { type: "CONFIG_OK" }>) =>
-              ev.command,
-          }),
+          actions: [
+            "RUN_COMMAND_ACTION",
+            assign({
+              comand: (_ctx: any, ev: Extract<CEvent, { type: "CONFIG_OK" }>) =>
+                ev.command,
+            }),
+            () => console.log("running command from inside...."),
+          ],
         },
         CONFIG_MISSING: "configurationMissing",
         CONFIG_ERROR: {
