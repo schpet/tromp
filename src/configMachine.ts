@@ -1,15 +1,14 @@
-import * as fsm from "@xstate/fsm"
+import { createMachine, assign } from "@xstate/fsm"
 
 interface CContext {
-  file: undefined | string
   command: undefined | string
   configError: undefined | string
 }
 
 type CEvent =
   | { type: "" }
-  | { type: "RUN"; command: string }
-  | { type: "CONFIG_OK" }
+  | { type: "RUN" }
+  | { type: "CONFIG_OK"; command: string }
   | { type: "CONFIG_MISSING" }
   | { type: "CONFIG_ERROR"; configError: string }
   | { type: "EDIT" }
@@ -19,7 +18,11 @@ type CEvent =
   | { type: "REJECT" }
   | { type: "RETRY" }
 
-type CContextEmpty = CContext & { file: undefined; command: undefined; configError: undefined }
+type CContextEmpty = CContext & {
+  file: undefined
+  command: undefined
+  configError: undefined
+}
 
 type CContextError = CContext & {
   file: string
@@ -44,33 +47,32 @@ type CState =
   | { value: "generated"; context: CContext }
   | { value: "success"; context: CContext }
 
-export const configMachine = fsm.createMachine<CContext, CEvent, CState>({
+export const configMachine = createMachine<CContext, CEvent, CState>({
   id: "config",
   initial: "idle",
   context: {
-    file: undefined,
     command: undefined,
     configError: undefined,
   },
   states: {
     idle: {
       on: {
-        RUN: {
-          target: "started",
-          actions: fsm.assign({
-            comand: (_ctx: any, ev: Extract<CEvent, { type: "RUN" }>) =>
-              ev.command,
-          }),
-        },
+        RUN: "started",
       },
     },
     started: {
       on: {
-        CONFIG_OK: "success",
+        CONFIG_OK: {
+          target: "success",
+          actions: assign({
+            comand: (_ctx: any, ev: Extract<CEvent, { type: "CONFIG_OK" }>) =>
+              ev.command,
+          }),
+        },
         CONFIG_MISSING: "configurationMissing",
         CONFIG_ERROR: {
           target: "configurationError",
-          actions: fsm.assign({
+          actions: assign({
             configError: (_ctx: any, ev: any) => ev.configError,
           }),
         },
