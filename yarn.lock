@@ -422,6 +422,11 @@
   dependencies:
     "@types/yargs-parser" "*"
 
+"@xstate/fsm@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@xstate/fsm/-/fsm-1.1.0.tgz#eabfa5e7647c59ede03f7be6d426741b5b2774c5"
+  integrity sha512-60uPWa8L0tsi15bLbz+g5hVAsqxZ5C5GhfdsCccrYzNRlBLNuBQQPHX1n/HEsWJsz8JUiYfW/eefh8r/25sKgA==
+
 abab@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.3.tgz#623e2075e02eb2d3f2475e49f99c91846467907a"
