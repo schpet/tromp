@@ -37,11 +37,12 @@ type CContextCommand = CContext & {
 
 type CState =
   | { value: "idle"; context: CContextEmpty }
-  | { value: "started"; context: CContextCommand }
+  | { value: "invoked"; context: CContextCommand }
   | { value: "configurationMissing"; context: CContextEmpty }
   | { value: "configurationError"; context: CContextError }
   | { value: "generating"; context: CContext }
   | { value: "generationFailed"; context: CContext }
+  | { value: "executing"; context: CContext }
 
 export const configMachine = createMachine<CContext, CEvent, CState>({
   id: "config",
@@ -52,32 +53,36 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
   },
   states: {
     idle: {
-      entry: () => console.log("entered idle"),
       on: {
-        RUN: "started",
+        RUN: "invoked",
       },
     },
-    started: {
+    invoked: {
       on: {
         CONFIG_OK: {
-          target: "idle",
+          target: "executing",
           actions: [
             "RUN_COMMAND_ACTION",
-            assign({
-              comand: (_ctx: any, ev: Extract<CEvent, { type: "CONFIG_OK" }>) =>
-                ev.command,
-            }),
-            () => console.log("running command from inside...."),
+            // assign({
+            //   comand: (_ctx: any, ev: Extract<CEvent, { type: "CONFIG_OK" }>) =>
+            //     ev.command,
+            // }),
+            assign({ comand: (_ctx, ev) => ev.command }),
           ],
         },
         CONFIG_MISSING: "configurationMissing",
         CONFIG_ERROR: {
           target: "configurationError",
           actions: assign({
-            configError: (_ctx: any, ev: any) => ev.configError,
+            configError: (_ctx, ev) => ev.configError,
           }),
         },
       },
+    },
+    executing: {
+      on: {
+        DISMISS: "idle"
+      }
     },
     configurationMissing: {
       on: {

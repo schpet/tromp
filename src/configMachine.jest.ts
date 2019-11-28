@@ -6,17 +6,15 @@ it("can run", () => {
   const mock = jest.fn()
 
   toggleService.subscribe(state => {
-    console.log(`state=${state.value}`)
-    // console.log(state)
     mock(state.value, state.changed)
-    state.actions.forEach(action => {
-      switch (action.type) {
-        case "RUN_COMMAND_ACTION": {
-          console.log("run command from outside!!")
-          break
-        }
-      }
-    })
+    // state.actions.forEach(action => {
+    //   switch (action.type) {
+    //     case "RUN_COMMAND_ACTION": {
+    //       console.log("run command from outside!!")
+    //       break
+    //     }
+    //   }
+    // })
   })
 
   expect(mock).toHaveBeenNthCalledWith(1, "idle", undefined)
