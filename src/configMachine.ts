@@ -6,7 +6,6 @@ interface CContext {
 }
 
 type CEvent =
-  | { type: "" }
   | { type: "RUN" }
   | { type: "CONFIG_OK"; command: string }
   | { type: "CONFIG_MISSING" }
@@ -14,8 +13,8 @@ type CEvent =
   | { type: "EDIT" }
   | { type: "GENERATE" }
   | { type: "DISMISS" }
-  | { type: "RESOLVE" }
-  | { type: "REJECT" }
+  | { type: "GENERATED" }
+  | { type: "GENERATION_ERROR" }
   | { type: "RETRY" }
 
 type CContextEmpty = CContext & {
@@ -41,11 +40,8 @@ type CState =
   | { value: "started"; context: CContextCommand }
   | { value: "configurationMissing"; context: CContextEmpty }
   | { value: "configurationError"; context: CContextError }
-  | { value: "editing"; context: CContext }
   | { value: "generating"; context: CContext }
   | { value: "generationFailed"; context: CContext }
-  | { value: "generated"; context: CContext }
-  | { value: "success"; context: CContext }
 
 export const configMachine = createMachine<CContext, CEvent, CState>({
   id: "config",
@@ -56,6 +52,7 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
   },
   states: {
     idle: {
+      entry: () => console.log("entered idle"),
       on: {
         RUN: "started",
       },
@@ -63,7 +60,7 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
     started: {
       on: {
         CONFIG_OK: {
-          target: "success",
+          target: "idle",
           actions: [
             "RUN_COMMAND_ACTION",
             assign({
@@ -84,42 +81,27 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
     },
     configurationMissing: {
       on: {
-        EDIT: "editing",
+        EDIT: "idle",
         GENERATE: "generating",
         DISMISS: "idle",
       },
     },
     configurationError: {
       on: {
-        EDIT: "editing",
+        EDIT: "idle",
         DISMISS: "idle",
-      },
-    },
-    editing: {
-      on: {
-        "": "idle",
       },
     },
     generating: {
       on: {
-        RESOLVE: "generated",
-        REJECT: "generationFailed",
+        GENERATED: "idle",
+        GENERATION_ERROR: "generationFailed",
       },
     },
     generationFailed: {
       on: {
         RETRY: "generating",
         DISMISS: "idle",
-      },
-    },
-    generated: {
-      on: {
-        "": "idle",
-      },
-    },
-    success: {
-      on: {
-        "": "idle",
       },
     },
   },

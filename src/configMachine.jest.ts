@@ -26,16 +26,15 @@ it("can run", () => {
 
   // invalid events
   toggleService.send({ type: "EDIT" })
-  toggleService.send({ type: "REJECT" })
   expect(mock).toHaveBeenNthCalledWith(3, "started", false)
-  expect(mock).toHaveBeenNthCalledWith(4, "started", false)
 
   toggleService.send({ type: "CONFIG_OK", command: "foo" })
-  expect(mock).toHaveBeenNthCalledWith(5, "success", true)
+  expect(mock).toHaveBeenNthCalledWith(4, "idle", true)
 
   // manually send this??
-  toggleService.send({ type: "" })
-  expect(mock).toHaveBeenNthCalledWith(6, "idle", true)
+  // toggleService.send({ type: "" })
+  // expect(mock).toHaveBeenNthCalledWith(6, "idle", true)
+  // toggleService.send({ type: "RUN" })
 
   toggleService.stop()
 })
