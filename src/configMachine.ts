@@ -21,10 +21,10 @@ type CContextError = CContext & {
 type CEvent =
   | { type: "RUN" }
   | { type: "SUCCESS" }
-  | { type: "NO_COMMAND" }
-  | { type: "CONFIG_MISSING" }
+  | { type: "NO_COMMAND", workspace: Uri }
+  | { type: "CONFIG_MISSING"; workspace: Uri }
   | { type: "CONFIG_ERROR"; configError: string; workspace: Uri }
-  | { type: "EDIT" }
+  | { type: "EDIT"; workspace: Uri }
   | { type: "GENERATE" }
   | { type: "DISMISS" }
   | { type: "GENERATED" }
@@ -42,13 +42,16 @@ type CState =
         configError: undefined
       }
     }
-  | { value: "configurationMissing"; context: CContextEmpty }
+  | { value: "configurationMissing"; context: CContext & { workspace: Uri } }
   | { value: "configurationError"; context: CContextError }
   | { value: "generating"; context: CContext }
   | { value: "generationFailed"; context: CContext }
   | { value: "executing"; context: CContext }
   | { value: "noWorkspace"; context: CContext }
+  | { value: "noCommand"; context: CContext & { workspace: Uri } }
 
+// type questions:
+// - when adding state not in TState, why no error?
 export const configMachine = createMachine<CContext, CEvent, CState>({
   id: "config",
   initial: "idle",
@@ -59,23 +62,34 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
   states: {
     idle: {
       on: {
-        RUN: {
-          target: "invoked",
-        },
+        RUN: "invoked",
       },
     },
     invoked: {
       entry: [{ type: "EXECUTE" }],
       on: {
         // event
+        RUN: "invoked",
         SUCCESS: {
           target: "idle",
           actions: [
             // TODO: consider storing "previous command" to state
           ],
         },
-        NO_COMMAND: "noCommand", // TODO: assign the current filename
-        CONFIG_MISSING: "configurationMissing",
+        NO_COMMAND: {
+          target: "noCommand", // TODO: assign the current filename
+          actions: assign({
+            // @ts-ignore
+            workspace: (_ctx, ev) => ev.workspace,
+          }),
+        },
+        CONFIG_MISSING: {
+          target: "configurationMissing",
+          actions: assign({
+            // @ts-ignore
+            workspace: (_ctx, ev) => ev.workspace,
+          }),
+        },
         CONFIG_ERROR: {
           target: "configurationError",
           actions: assign({
@@ -90,15 +104,32 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
     },
     noCommand: {
       on: {
+        RUN: "invoked",
         DISMISS: "idle",
-        EDIT: "idle",
+        EDIT: {
+          target: "idle",
+          actions: [
+            assign({
+              // @ts-ignore
+              workspace: (_ctx, ev) => ev.workspace,
+            }),
+            { type: "EDIT_CONFIG" },
+          ],
+        },
       },
     },
     configurationMissing: {
       on: {
+        RUN: "invoked",
         EDIT: {
           target: "idle",
-          actions: ["EDIT_CONFIG"],
+          actions: [
+            assign({
+              // @ts-ignore
+              workspace: (_ctx, ev) => ev.workspace,
+            }),
+            { type: "EDIT_CONFIG" },
+          ],
         },
         GENERATE: "generating",
         DISMISS: "idle",
@@ -106,6 +137,7 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
     },
     configurationError: {
       on: {
+        RUN: "invoked",
         EDIT: {
           target: "idle",
           actions: ["EDIT_CONFIG"],
@@ -116,6 +148,7 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
     generating: {
       entry: ["GENERATE_CONFIG"],
       on: {
+        RUN: "invoked",
         GENERATED: {
           target: "idle",
         },
@@ -124,12 +157,14 @@ export const configMachine = createMachine<CContext, CEvent, CState>({
     },
     generationFailed: {
       on: {
+        RUN: "invoked",
         RETRY: "generating",
         DISMISS: "idle",
       },
     },
     noWorkspace: {
       on: {
+        RUN: "invoked",
         DISMISS: "idle",
       },
     },
