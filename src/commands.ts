@@ -1,9 +1,6 @@
 import * as vscode from "vscode"
-import { getCommand, readConfigFromFs } from "./trompConfig"
-import * as path from "path"
-import { failure, success } from "./Result"
 import * as lineArguments from "./lineArguments"
-import { quote } from "shell-quote"
+import { getCommandInContext, runTerminalCommand, stateKeys } from "./util"
 
 function showErrorMessage(message: string, prefix = "Tromp: ") {
   vscode.window.showErrorMessage(`${prefix}${message}`)
@@ -17,7 +14,7 @@ export async function runCommand(context: vscode.ExtensionContext) {
   }
   const command = commandResult.value
 
-  runTerminalCommand(`${command.command}`, context)
+  runTerminalCommand(`${command.command}`)
 }
 
 export async function runCommandWithLine(context: vscode.ExtensionContext) {
@@ -50,18 +47,7 @@ export async function runCommandWithLine(context: vscode.ExtensionContext) {
     return
   }
 
-  runTerminalCommand(`${command.command} ${lineArgument.value}`, context)
-}
-
-export async function runCommandWithFile(context: vscode.ExtensionContext) {
-  const commandResult = await getCommandInContext()
-  if (!commandResult.ok) {
-    showErrorMessage(commandResult.reason)
-    return
-  }
-  const command = commandResult.value
-
-  runTerminalCommand(`${command.command} ${quote([command.file])}`, context)
+  runTerminalCommand(`${command.command} ${lineArgument.value}`)
 }
 
 export async function runPreviousCommand(context: vscode.ExtensionContext) {
@@ -77,55 +63,4 @@ export async function runPreviousCommand(context: vscode.ExtensionContext) {
   }
 
   runTerminalCommand(prev)
-}
-
-async function runTerminalCommand(
-  cmd: string,
-  context: null | vscode.ExtensionContext = null
-) {
-  const terminal =
-    vscode.window.activeTerminal || vscode.window.createTerminal("tromp")
-
-  terminal.show(true)
-
-  // would be nicer to keep scroll-back history
-  await vscode.commands.executeCommand("workbench.action.terminal.clear")
-
-  terminal.sendText(cmd)
-
-  if (context) context.workspaceState.update(stateKeys.previousCommand, cmd)
-}
-
-enum stateKeys {
-  previousCommand = "PREVIOUS_COMMAND",
-}
-
-async function getCommandInContext() {
-  const { workspaceFolders } = vscode.workspace
-  const workspaceRoot = workspaceFolders && workspaceFolders[0]
-  if (!workspaceRoot) {
-    return failure(`need workspace to run`)
-  }
-
-  const editor = vscode.window.activeTextEditor
-  if (!editor) {
-    return failure(`needs an active editor to run`)
-  }
-
-  const rootFsPath = workspaceRoot.uri.fsPath
-
-  const configFsPath = path.join(rootFsPath, "tromp.json")
-  const trompConfigResult = await readConfigFromFs(configFsPath)
-  if (!trompConfigResult.ok) {
-    return failure(`tromp.json ${trompConfigResult.reason}`)
-  }
-  const trompConfig = trompConfigResult.value
-
-  const commandResult = await getCommand({
-    trompConfig,
-    activeFsPath: editor.document.uri.fsPath,
-    rootFsPath,
-  })
-
-  return commandResult
 }
