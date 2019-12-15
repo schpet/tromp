@@ -108,9 +108,10 @@ export async function getCommandInContext(
   }
 }
 
-export async function runTerminalCommand(cmd: string) {
+export async function runTerminalCommand(cmd: string, terminalName = "Tromp") {
   const terminal =
-    vscode.window.activeTerminal || vscode.window.createTerminal("tromp")
+    vscode.window.terminals.find(terminal => terminal.name === terminalName) ||
+    vscode.window.createTerminal(terminalName)
 
   terminal.show(true)
 
