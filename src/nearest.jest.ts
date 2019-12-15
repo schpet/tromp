@@ -1,4 +1,4 @@
-import { jest, rspec } from "./lineArguments"
+import { jest, rspec } from "./nearest"
 
 describe("rspec", () => {
   it("returns a colon and line number", () => {
