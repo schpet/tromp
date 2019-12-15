@@ -1,8 +1,8 @@
 pre-commit:
   parallel: true
   commands:
-    javascript:
-      glob: "{*.js,*.jsx,*.ts}"
+    typescript:
+      glob: "{*.ts,*.tsx}"
       run: yarn prettier --write {staged_files} && git add {staged_files}
     other:
       glob: "*.{css,scss,json,md}"
