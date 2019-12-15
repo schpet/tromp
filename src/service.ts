@@ -6,7 +6,7 @@ import {
   CommandEvent,
   commandMachine,
   trompMachine,
-} from "./configMachine"
+} from "./machine"
 import { generateConfig, getCommandInContext, runTerminalCommand } from "./util"
 
 export const buildTrompService = () => {

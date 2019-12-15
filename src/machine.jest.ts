@@ -4,7 +4,7 @@ import {
   CommandArgument,
   commandMachine as commandMachinePlain,
   trompMachine,
-} from "./configMachine"
+} from "./machine"
 
 it(`runs a command successfully`, done => {
   const commandMachine = commandMachinePlain.withConfig({
@@ -31,5 +31,5 @@ it(`runs a command successfully`, done => {
     })
 
   const service = interpret(machine).start()
-  service.send({ type: "RUN_FILE", argument: CommandArgument.file })
+  service.send({ type: "RUN_COMMAND", argument: CommandArgument.file })
 })

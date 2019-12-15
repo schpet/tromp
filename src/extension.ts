@@ -1,6 +1,6 @@
 import * as vscode from "vscode"
-import { CommandArgument } from "./configMachine"
-import { buildTrompService } from "./trompService"
+import { CommandArgument } from "./machine"
+import { buildTrompService } from "./service"
 
 const { registerCommand } = vscode.commands
 
@@ -8,13 +8,13 @@ export function activate(context: vscode.ExtensionContext) {
   const service = buildTrompService().start()
 
   const runCommand = registerCommand("tromp.runCommand", () => {
-    service.send({ type: "RUN_FILE", argument: CommandArgument.none })
+    service.send({ type: "RUN_COMMAND", argument: CommandArgument.none })
   })
   const runCommandWithFile = registerCommand("tromp.runCommandWithFile", () => {
-    service.send({ type: "RUN_FILE", argument: CommandArgument.file })
+    service.send({ type: "RUN_COMMAND", argument: CommandArgument.file })
   })
   const runCommandWithLine = registerCommand("tromp.runCommandWithLine", () => {
-    service.send({ type: "RUN_FILE", argument: CommandArgument.nearest })
+    service.send({ type: "RUN_COMMAND", argument: CommandArgument.nearest })
   })
   const runPreviousCommand = registerCommand("tromp.runPreviousCommand", () => {
     service.send({ type: "RUN_PREVIOUS" })
