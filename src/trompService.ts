@@ -161,7 +161,7 @@ const initializeCommandFinder = (
   commandFinder: Interpreter<CommandContext, any, CommandEvent>
 ) =>
   commandFinder.subscribe(state => {
-    console.log(`Command Finder ${state.context.id} state=${state.value}`, {
-      context: state.context,
-    })
+    // console.log(`Command Finder ${state.context.id} state=${state.value}`, {
+    //   context: state.context,
+    // })
   })

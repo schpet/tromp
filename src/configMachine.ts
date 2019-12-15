@@ -54,7 +54,6 @@ const findCommandErrorActions = assign<
   DoneInvokeEvent<TrompCommandProblem>
 >({
   workspace: (_context, event: CommandErrorEvent) => {
-    console.log(`wtf`, event)
     return event.data.workspace
   },
   errorMessage: (_context, event: DoneInvokeEvent<TrompCommandProblem>) =>
@@ -85,15 +84,14 @@ export const commandMachine = createMachine<
         src: "findCommand",
         onDone: {
           target: "complete",
-          actions: sendParent((
-            context: CommandContext /*todo why type?*/,
-            event: DoneInvokeEvent<string>
-          ) => {
-            return {
-              type: "COMMAND_FINDER.FOUND",
-              command: event.data,
+          actions: sendParent(
+            (_context: void, event: DoneInvokeEvent<string>) => {
+              return {
+                type: "COMMAND_FINDER.FOUND",
+                command: event.data,
+              }
             }
-          }),
+          ),
         },
         onError: [
           {
