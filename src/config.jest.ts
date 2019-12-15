@@ -1,4 +1,4 @@
-import { decodeConfig } from "./trompConfig"
+import { decodeConfig } from "./config"
 
 describe(`decodeConfig`, () => {
   it(`reads a valid config`, () => {
