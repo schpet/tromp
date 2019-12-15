@@ -58,6 +58,7 @@
     "format-check": "prettier --check '*.{ts,md,json}' 'src/**/*.{ts,md,json}'"
   },
   "devDependencies": {
+    "@arkweid/lefthook": "^0.6.7",
     "@types/glob": "^7.1.1",
     "@types/jest": "^24.0.23",
     "@types/minimatch": "^3.0.3",
