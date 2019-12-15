@@ -1,23 +1,24 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode"
-import * as commands from "./commands"
+import { CommandArgument } from "./configMachine"
+import { buildTrompService } from "./trompService"
+
+const { registerCommand } = vscode.commands
 
 export function activate(context: vscode.ExtensionContext) {
-  const { registerCommand } = vscode.commands
+  const service = buildTrompService().start()
 
-  const runCommand = registerCommand("tromp.runCommand", () =>
-    commands.runCommand(context)
-  )
-  const runCommandWithLine = registerCommand("tromp.runCommandWithLine", () =>
-    commands.runCommandWithLine(context)
-  )
-  const runPreviousCommand = registerCommand("tromp.runPreviousCommand", () =>
-    commands.runPreviousCommand(context)
-  )
-  const runCommandWithFile = registerCommand("tromp.runCommandWithFile", () =>
-    commands.runCommandWithFile(context)
-  )
+  const runCommand = registerCommand("tromp.runCommand", () => {
+    service.send({ type: "RUN_FILE", argument: CommandArgument.none })
+  })
+  const runCommandWithFile = registerCommand("tromp.runCommandWithFile", () => {
+    service.send({ type: "RUN_FILE", argument: CommandArgument.file })
+  })
+  const runCommandWithLine = registerCommand("tromp.runCommandWithLine", () => {
+    service.send({ type: "RUN_FILE", argument: CommandArgument.nearest })
+  })
+  const runPreviousCommand = registerCommand("tromp.runPreviousCommand", () => {
+    service.send({ type: "RUN_PREVIOUS" })
+  })
 
   context.subscriptions.push(runCommand)
   context.subscriptions.push(runCommandWithFile)

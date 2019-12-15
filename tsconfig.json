@@ -9,7 +9,10 @@
     "strict": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noErrorTruncation": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true
   },
   "exclude": ["node_modules", ".vscode-test"]
 }

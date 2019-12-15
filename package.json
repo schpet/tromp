@@ -80,6 +80,7 @@
     "ajv": "^6.10.2",
     "alternate-file": "^0.2.6",
     "minimatch": "^3.0.4",
-    "shell-quote": "^1.7.2"
+    "shell-quote": "^1.7.2",
+    "xstate": "^4.7.3"
   }
 }

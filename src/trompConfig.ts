@@ -38,9 +38,9 @@ export function decodeConfig(config: string): Result<TrompConfig, string> {
       const [firstError] = errors
       const dataPath = firstError.dataPath || `root`
       const message = firstError.message || `(unknown)`
-      return failure(`doesn’t seem right – ${dataPath} ${message}`)
+      return failure(`${dataPath} ${message}`)
     }
-    return failure(`doesn’t seem right (no info from ajv about why)`)
+    return failure(`no info from ajv about problems`)
   }
 
   return success(configData)
@@ -59,6 +59,12 @@ export async function readConfigFromFs(
   return decodeConfig(configBuffer.toString())
 }
 
+export interface TrompCommand {
+  command: string
+  file: string
+  mode: ArgumentTypeUsedForLinesDefaultsToRspec
+}
+
 export async function getCommand({
   trompConfig,
   activeFsPath,
@@ -67,16 +73,7 @@ export async function getCommand({
   trompConfig: TrompConfig
   activeFsPath: string
   rootFsPath: string
-}): Promise<
-  Result<
-    {
-      command: string
-      file: string
-      mode: ArgumentTypeUsedForLinesDefaultsToRspec
-    },
-    string
-  >
-> {
+}): Promise<Result<TrompCommand, string>> {
   const activeFsPathRelative = relative(rootFsPath, activeFsPath)
   let [command, file] = [
     findCommand(trompConfig, activeFsPathRelative),
@@ -98,7 +95,7 @@ export async function getCommand({
   }
 
   if (!command) {
-    return failure(`tromp.json has no match for ${activeFsPathRelative}`)
+    return failure(activeFsPathRelative)
   }
 
   const mode = command.mode || "rspec"
