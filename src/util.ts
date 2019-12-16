@@ -2,10 +2,10 @@ import { promises as fs, existsSync } from "fs"
 import * as path from "path"
 import * as vscode from "vscode"
 import { failure, Result, success } from "./Result"
-import { decodeConfig, getCommand, TrompCommand } from "./trompConfig"
+import { decodeConfig, getCommand, TrompCommand } from "./config"
 import { TrompConfig } from "./types/trompSchema"
-import { TrompCommandProblem, CommandArgument } from "./configMachine"
-import * as lineArguments from "./lineArguments"
+import { TrompCommandProblem, CommandArgument } from "./machine"
+import * as nearest from "./nearest"
 
 const getWorkspace = () => {
   const { workspaceFolders } = vscode.workspace
@@ -83,24 +83,24 @@ export async function getCommandInContext(
       const getLine = (line: number) => {
         return editor.document.lineAt(line).text
       }
-      const lineArgumentFn = lineArguments[command.mode]
-      const lineArgument = lineArgumentFn({
+      const nearestFn = nearest[command.mode]
+      const nearestResult = nearestFn({
         file: command.file,
         line: editor.selection.active.line,
         getLine,
       })
 
-      if (!lineArgument.ok) {
+      if (!nearestResult.ok) {
         return failure({
           problem: "nearest_not_found",
-          message: lineArgument.reason,
+          message: nearestResult.reason,
           workspace,
         })
       }
 
       return success({
         ...command,
-        command: `${command.command} ${lineArgument.value}`,
+        command: `${command.command} ${nearestResult.value}`,
       })
     }
     default:
@@ -108,9 +108,10 @@ export async function getCommandInContext(
   }
 }
 
-export async function runTerminalCommand(cmd: string) {
+export async function runTerminalCommand(cmd: string, terminalName = "Tromp") {
   const terminal =
-    vscode.window.activeTerminal || vscode.window.createTerminal("tromp")
+    vscode.window.terminals.find(terminal => terminal.name === terminalName) ||
+    vscode.window.createTerminal(terminalName)
 
   terminal.show(true)
 

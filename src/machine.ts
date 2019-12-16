@@ -217,7 +217,7 @@ export interface ExtensionContext {
 }
 
 export type ExtensionEvent =
-  | { type: "RUN_FILE"; argument: CommandArgument }
+  | { type: "RUN_COMMAND"; argument: CommandArgument }
   | { type: "RUN_PREVIOUS" }
   | { type: "COMMAND_FINDER.STARTED"; id: number }
   | { type: "COMMAND_FINDER.FOUND"; command: string }
@@ -247,7 +247,7 @@ export const trompMachine = createMachine<
   states: {
     idle: {
       on: {
-        "RUN_FILE": {
+        "RUN_COMMAND": {
           actions: assign({
             commandFinders: (context, event) => {
               if (!context.commandMachine.context)
