@@ -8,6 +8,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Setup build environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libxkbfile-dev pkg-config libsecret-1-dev libxss1 dbus xvfb libgtk-3-0
+        sudo cp src/test/xvfb.init /etc/init.d/xvfb
+        sudo chmod +x /etc/init.d/xvfb
+        sudo update-rc.d xvfb defaults
+        sudo service xvfb start
     - uses: actions/cache@v1
       with:
         path: ~/.cache/yarn
@@ -15,6 +23,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-
     - run: yarn install
+    - run: yarn run compile
     - run: yarn format-check
     - run: yarn test-unit
     - run: yarn test
