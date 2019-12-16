@@ -9,6 +9,9 @@ suite("Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.")
 
   test("shows no workspace error message", async () => {
+    await vscode.commands.executeCommand("workbench.action.closeAllEditors")
+    await vscode.commands.executeCommand("workbench.action.closeFolder")
+
     const spy = sinon.spy(vscode.window, "showErrorMessage")
 
     await vscode.commands.executeCommand("tromp.runCommandWithFile")

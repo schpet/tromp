@@ -51,7 +51,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile",
-    "test": "node ./out/test/runCommand.js",
+    "test": "node ./out/test/runTest.js",
     "schema": "json2ts src/trompSchema.json src/types/trompSchema.d.ts",
     "install-locally": "vsce package && code --install-extension tromp-0.0.1.vsix",
     "format": "prettier --write '*.{ts,md,json}' 'src/**/*.{ts,md,json}'",
