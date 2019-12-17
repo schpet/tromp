@@ -23,7 +23,7 @@ export const buildTrompService = () => {
 
         return command.command
       },
-      generateConfig: (context, event) => async callback => {
+      generateConfig: async (context, event) => {
         if (!context.workspace) throw new Error("invariant: expected workspace")
         const file = vscode.Uri.file(
           path.join(context.workspace.fsPath, "tromp.json")
@@ -31,9 +31,9 @@ export const buildTrompService = () => {
         const result = await generateConfig(file.fsPath)
         if (result.ok) {
           vscode.window.showTextDocument(file)
-          callback({ type: "GENERATED" })
+          return
         } else {
-          callback({ type: "GENERATION_ERROR" })
+          throw result.reason
         }
       },
       renderConfigNotFound: (context, event) => (callback, onEvent) => {

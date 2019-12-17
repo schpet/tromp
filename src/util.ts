@@ -107,11 +107,15 @@ export async function getCommandInContext(
       throw new Error(`invariant: unexpected argument ${mode}`)
   }
 }
-
-export async function runTerminalCommand(cmd: string, terminalName = "Tromp") {
-  const terminal =
+export function trompTerminal(terminalName = "Tromp") {
+  return (
     vscode.window.terminals.find(terminal => terminal.name === terminalName) ||
     vscode.window.createTerminal(terminalName)
+  )
+}
+
+export async function runTerminalCommand(cmd: string) {
+  const terminal = trompTerminal()
 
   terminal.show(true)
 

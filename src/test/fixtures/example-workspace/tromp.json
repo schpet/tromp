@@ -1,0 +1,12 @@
+{
+  "commands": [
+    {
+      "command": "cat",
+      "match": "**/*.txt"
+    },
+    {
+      "command": "node",
+      "match": "**/*.js"
+    }
+  ]
+}

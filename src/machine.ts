@@ -198,8 +198,7 @@ export const commandMachine = createMachine<
     },
     complete: {
       type: "final",
-      // @ts-ignore
-      entry: sendParent((context, event) => ({
+      entry: sendParent((context: { id: string }) => ({
         type: "COMMAND_FINDER.FINISHED",
         id: context.id,
       })),
