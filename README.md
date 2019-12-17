@@ -5,8 +5,7 @@ running tests and arbitrary commands without leaving your editor.
 
 ### how it works
 
-reads a tromp.json config file that connects glob matches to commands to run on
-that file.
+reads a tromp.json config file that connects glob matches with commands to run.
 
 ### commands
 
