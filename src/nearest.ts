@@ -1,4 +1,3 @@
-// TODO rename to "nearest"
 import { success, Result, failure } from "./Result"
 import { quote } from "shell-quote"
 
