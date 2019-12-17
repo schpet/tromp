@@ -15,7 +15,7 @@
   "activationEvents": [
     "onCommand:tromp.runCommand",
     "onCommand:tromp.runCommandWithFile",
-    "onCommand:tromp.runCommandWithLine",
+    "onCommand:tromp.runCommandWithNearest",
     "onCommand:tromp.runPreviousCommand"
   ],
   "main": "./out/extension.js",
@@ -30,7 +30,7 @@
         "title": "Tromp: run command with file as argument"
       },
       {
-        "command": "tromp.runCommandWithLine",
+        "command": "tromp.runCommandWithNearest",
         "title": "Tromp: run command with line as argument"
       },
       {

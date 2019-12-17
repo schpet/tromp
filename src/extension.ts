@@ -13,16 +13,19 @@ export function activate(context: vscode.ExtensionContext) {
   const runCommandWithFile = registerCommand("tromp.runCommandWithFile", () => {
     service.send({ type: "RUN_COMMAND", argument: CommandArgument.file })
   })
-  const runCommandWithLine = registerCommand("tromp.runCommandWithLine", () => {
-    service.send({ type: "RUN_COMMAND", argument: CommandArgument.nearest })
-  })
+  const runCommandWithNearest = registerCommand(
+    "tromp.runCommandWithNearest",
+    () => {
+      service.send({ type: "RUN_COMMAND", argument: CommandArgument.nearest })
+    }
+  )
   const runPreviousCommand = registerCommand("tromp.runPreviousCommand", () => {
     service.send({ type: "RUN_PREVIOUS" })
   })
 
   context.subscriptions.push(runCommand)
   context.subscriptions.push(runCommandWithFile)
-  context.subscriptions.push(runCommandWithLine)
+  context.subscriptions.push(runCommandWithNearest)
   context.subscriptions.push(runPreviousCommand)
 }
 
