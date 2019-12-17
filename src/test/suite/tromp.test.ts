@@ -4,8 +4,6 @@ import * as path from "path"
 import * as sinon from "sinon"
 import * as util from "../../util"
 
-const sleep = (m: number) => new Promise(r => setTimeout(r, m))
-
 suite("Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.")
 
