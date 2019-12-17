@@ -24,7 +24,8 @@ jobs:
             github.workspace, '/yarn.lock')) }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - run: |
+      - name: install deps and compile ts
+        run: |
           yarn --frozen-lockfile
           yarn run compile
         env:
