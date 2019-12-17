@@ -16,6 +16,7 @@ async function main() {
     await runTests({
       extensionDevelopmentPath,
       extensionTestsPath,
+      launchArgs: ["src/test/fixtures/example-workspace"],
     })
   } catch (err) {
     console.error("Failed to run tests")
