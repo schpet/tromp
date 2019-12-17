@@ -27,7 +27,7 @@ reads a tromp.json config file that connects glob matches with commands to run.
 
 ### install and setup
 
-_todo: link to vscode marketplace_
+https://marketplace.visualstudio.com/items?itemName=schpet.tromp
 
 #### regular keybindings
 
