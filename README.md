@@ -36,9 +36,10 @@ _todo: add some reasonable keybindings_
 
 #### vim keybindings
 
-update your settings json with something like this
+update your settings.json with something like this
 
 ```json
+{
   "vim.normalModeKeyBindingsNonRecursive": [
     {
       "before": ["<leader>", "a"],
@@ -55,6 +56,7 @@ update your settings json with something like this
     {
       "before": ["<leader>", "r"],
       "commands": ["tromp.runPreviousCommand"]
-    },
-  ],
+    }
+  ]
+}
 ```
