@@ -3,7 +3,7 @@
   "displayName": "tromp",
   "publisher": "schpet",
   "description": "run tests and arbitrary commands based on the file open",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "engines": {
     "vscode": "^1.40.0"
   },
