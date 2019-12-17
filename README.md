@@ -31,7 +31,7 @@ _todo: link to vscode marketplace_
 
 #### regular keybindings
 
-_todo: add some reasonable keybindings_
+Preferences → Keyboard Shortcuts → Search for tromp
 
 #### vim keybindings
 
