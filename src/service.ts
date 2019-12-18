@@ -138,30 +138,8 @@ export const buildTrompService = () => {
             throw new Error("invariant: no current command")
           runTerminalCommand(context.currentCommand)
         },
-        CONNECT_COMMAND_FINDER_UI: (context, event: any /* todo: types */) => {
-          const commandFinder = context.commandFinders.find(
-            cf => cf.id === event.id
-          )
-          if (!commandFinder)
-            throw new Error("invariant: expected command finder")
-
-          initializeCommandFinder(commandFinder.ref)
-        },
       },
     })
 
-  const service = interpret(machine).onTransition(state => {
-    // vscode.window.setStatusBarMessage(`STATE=${state.value}`)
-  })
-
-  return service
+  return interpret(machine)
 }
-
-const initializeCommandFinder = (
-  commandFinder: Interpreter<CommandContext, any, CommandEvent>
-) =>
-  commandFinder.subscribe(state => {
-    // console.log(`Command Finder ${state.context.id} state=${state.value}`, {
-    //   context: state.context,
-    // })
-  })

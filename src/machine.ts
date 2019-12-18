@@ -76,10 +76,6 @@ export const commandMachine = createMachine<
   },
   states: {
     started: {
-      entry: sendParent((context: CommandContext, event: void) => ({
-        type: "COMMAND_FINDER.STARTED",
-        id: context.id,
-      })),
       invoke: {
         src: "findCommand",
         onDone: {
@@ -281,9 +277,6 @@ export const trompMachine = createMachine<
             actions: "NO_PREVIOUS_COMMAND",
           },
         ],
-        "COMMAND_FINDER.STARTED": {
-          actions: "CONNECT_COMMAND_FINDER_UI",
-        },
         "COMMAND_FINDER.FOUND": {
           target: "executing",
           actions: assign({
