@@ -1,20 +1,8 @@
 {
   "name": "tromp",
-  "displayName": "tromp",
-  "publisher": "schpet",
   "description": "run tests and arbitrary commands based on the file open",
   "version": "0.2.1",
-  "engines": {
-    "vscode": "^1.40.0"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/schpet/tromp.git"
-  },
-  "categories": [
-    "Other"
-  ],
+  "author": "Peter Schilling",
   "activationEvents": [
     "onCommand:tromp.runCommand",
     "onCommand:tromp.runCommandWithFile",
@@ -22,7 +10,10 @@
     "onCommand:tromp.runPreviousCommand",
     "onCommand:tromp.openLink"
   ],
-  "main": "./out/extension.js",
+  "bugs": "https://github.com/schpet/tromp/issues",
+  "categories": [
+    "Other"
+  ],
   "contributes": {
     "commands": [
       {
@@ -54,17 +45,12 @@
     ],
     "taskDefinitions": []
   },
-  "scripts": {
-    "vscode:prepublish": "yarn run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "yarn run compile",
-    "test": "node ./out/test/runTest.js",
-    "test-unit": "yarn jest",
-    "schema": "json2ts src/trompSchema.json src/types/trompSchema.d.ts",
-    "install-locally": "vsce package && code --install-extension tromp-0.0.1.vsix",
-    "format": "prettier --write '*.{ts,md,json}' 'src/**/*.{ts,md,json}'",
-    "format-check": "prettier --check '*.{ts,md,json}' 'src/**/*.{ts,md,json}'"
+  "dependencies": {
+    "ajv": "^6.10.2",
+    "alternate-file": "^0.2.6",
+    "minimatch": "^3.0.4",
+    "shell-quote": "^1.7.2",
+    "xstate": "^4.7.3"
   },
   "devDependencies": {
     "@arkweid/lefthook": "^0.6.7",
@@ -87,11 +73,32 @@
     "typescript": "^3.7.2",
     "vscode-test": "^1.2.2"
   },
-  "dependencies": {
-    "ajv": "^6.10.2",
-    "alternate-file": "^0.2.6",
-    "minimatch": "^3.0.4",
-    "shell-quote": "^1.7.2",
-    "xstate": "^4.7.3"
+  "displayName": "tromp",
+  "engines": {
+    "vscode": "^1.40.0"
+  },
+  "homepage": "https://github.com/schpet/tromp",
+  "keywords": [
+    "jest",
+    "vscode"
+  ],
+  "license": "MIT",
+  "main": "./out/extension.js",
+  "publisher": "schpet",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/schpet/tromp.git"
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "format": "prettier --write '*.{ts,md,json}' 'src/**/*.{ts,md,json}'",
+    "format-check": "prettier --check '*.{ts,md,json}' 'src/**/*.{ts,md,json}'",
+    "install-locally": "vsce package && code --install-extension tromp-0.0.1.vsix",
+    "pretest": "yarn run compile",
+    "schema": "json2ts src/trompSchema.json src/types/trompSchema.d.ts",
+    "test": "node ./out/test/runTest.js",
+    "test-unit": "yarn jest",
+    "vscode:prepublish": "yarn run compile",
+    "watch": "tsc -watch -p ./"
   }
 }
