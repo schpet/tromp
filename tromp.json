@@ -1,0 +1,17 @@
+{
+  "commands": [
+    {
+      "match": "**/*.jest.ts",
+      "command": "yarn jest",
+      "mode": "jest"
+    },
+    {
+      "match": "src/trompSchema.json",
+      "command": "yarn run schema"
+    }
+  ],
+  "links": {
+    "marketplace": "https://marketplace.visualstudio.com/items?itemName=schpet.tromp",
+    "github": "https://github.com/schpet/tromp"
+  }
+}
