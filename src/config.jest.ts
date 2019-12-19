@@ -32,4 +32,34 @@ describe(`decodeConfig`, () => {
       }
     `)
   })
+
+  describe(`links`, () => {
+    it(`allows links`, () => {
+      const config = JSON.stringify({
+        links: {
+          foo: "https://foo.biz",
+          bar: "https://bar.ca",
+          baz: "file:///tmp/foo",
+        },
+      })
+
+      const result = decodeConfig(config)
+
+      expect(result).not.toHaveProperty("reason")
+      expect(result.ok).toBe(true)
+    })
+
+    it(`validates uris`, () => {
+      const config = JSON.stringify({
+        links: {
+          foo: "not a link",
+        },
+      })
+
+      const result = decodeConfig(config)
+
+      expect(result).toHaveProperty("reason")
+      expect(result.ok).toBe(false)
+    })
+  })
 })
