@@ -14,9 +14,9 @@ const getWorkspace = () => {
   return workspaceRoot.uri
 }
 
-export async function getCommandInContext(
-  mode: CommandArgument
-): Promise<Result<TrompCommand, TrompCommandProblem>> {
+export async function getConfig(): Promise<
+  Result<TrompConfig, TrompCommandProblem>
+> {
   const workspace = getWorkspace()
   if (!workspace) {
     return failure({ problem: "no_workspace" })
@@ -45,8 +45,21 @@ export async function getCommandInContext(
     })
   }
 
-  const trompConfig = trompConfigResult.value
+  return trompConfigResult
+}
 
+export async function getCommandInContext(
+  mode: CommandArgument
+): Promise<Result<TrompCommand, TrompCommandProblem>> {
+  const workspace = getWorkspace()
+  if (!workspace) {
+    return failure({ problem: "no_workspace" })
+  }
+
+  const trompConfigResult = await getConfig()
+  if (!trompConfigResult.ok) return trompConfigResult
+
+  const trompConfig = trompConfigResult.value
   const editor = vscode.window.activeTextEditor
   if (!editor) {
     return failure({

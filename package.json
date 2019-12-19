@@ -19,7 +19,8 @@
     "onCommand:tromp.runCommand",
     "onCommand:tromp.runCommandWithFile",
     "onCommand:tromp.runCommandWithNearest",
-    "onCommand:tromp.runPreviousCommand"
+    "onCommand:tromp.runPreviousCommand",
+    "onCommand:tromp.openLink"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -39,6 +40,10 @@
       {
         "command": "tromp.runPreviousCommand",
         "title": "Tromp: run previous command"
+      },
+      {
+        "command": "tromp.openLink",
+        "title": "Tromp: open a link"
       }
     ],
     "jsonValidation": [

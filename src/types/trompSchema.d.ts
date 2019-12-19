@@ -10,7 +10,10 @@ export type GlobMatchBasedOnMinimatch = string
 export type ArgumentTypeUsedForLinesDefaultsToRspec = "rspec" | "jest"
 
 export interface TrompConfig {
-  commands: Commands[]
+  commands?: Commands[]
+  links?: {
+    [k: string]: string
+  }
 }
 export interface Commands {
   command: CommandToRun

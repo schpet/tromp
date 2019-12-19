@@ -7,7 +7,12 @@ import {
   commandMachine,
   trompMachine,
 } from "./machine"
-import { generateConfig, getCommandInContext, runTerminalCommand } from "./util"
+import {
+  generateConfig,
+  getCommandInContext,
+  runTerminalCommand,
+  getConfig,
+} from "./util"
 
 export const buildTrompService = () => {
   const configuredCommandMachine = commandMachine.withConfig({
@@ -137,6 +142,36 @@ export const buildTrompService = () => {
           if (!context.currentCommand)
             throw new Error("invariant: no current command")
           runTerminalCommand(context.currentCommand)
+        },
+      },
+      services: {
+        openLink: async () => {
+          const configResult = await getConfig()
+          if (!configResult.ok) {
+            vscode.window.showErrorMessage(
+              `Problem with config: ${configResult.reason.problem}`
+            )
+            return
+          }
+
+          const config = configResult.value
+          const links = config.links || {}
+          const linkNames = Object.keys(links)
+
+          if (linkNames.length === 0) {
+            vscode.window.showErrorMessage(`No links in config`)
+            return
+          }
+
+          vscode.window.showQuickPick(linkNames).then(choice => {
+            if (!choice) return
+            const link = links[choice]
+
+            vscode.commands.executeCommand(
+              "vscode.open",
+              vscode.Uri.parse(link)
+            )
+          })
         },
       },
     })

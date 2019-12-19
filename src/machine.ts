@@ -46,6 +46,7 @@ export type CommandState =
   | { value: "noWorkspace"; context: CommandContext }
   | { value: "noEditor"; context: CommandContext }
   | { value: "complete"; context: CommandContext }
+  | { value: "openLink"; context: CommandContext }
 
 type CommandErrorEvent = DoneInvokeEvent<TrompCommandProblem>
 
@@ -100,7 +101,7 @@ export const commandMachine = createMachine<
           {
             target: "configNotFound",
             cond: function configNotFound(_context, event: CommandErrorEvent) {
-              return event.data.problem === "config_not_found"
+              return event.data && event.data.problem === "config_not_found"
             },
             actions: findCommandErrorActions,
           },
@@ -217,6 +218,7 @@ export type ExtensionEvent =
   | { type: "COMMAND_FINDER.STARTED"; id: number }
   | { type: "COMMAND_FINDER.FOUND"; command: string }
   | { type: "COMMAND_FINDER.FINISHED"; id: number }
+  | { type: "OPEN_LINK" }
 
 export type ExtensionState =
   | { value: "idle"; context: ExtensionContext }
@@ -291,6 +293,15 @@ export const trompMachine = createMachine<
               ),
           }),
         },
+        "OPEN_LINK": "openLink",
+      },
+    },
+    // this is disappointing, should be able to spawn a machine that finds and
+    // generates a config
+    openLink: {
+      invoke: {
+        src: "openLink",
+        onDone: "idle",
       },
     },
     executing: {
