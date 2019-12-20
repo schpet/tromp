@@ -9,7 +9,7 @@
       "match": "**/*.js"
     }
   ],
-  "links": {
+  "bookmarks": {
     "foo": "https://example.com/foo"
   }
 }

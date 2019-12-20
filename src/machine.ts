@@ -14,6 +14,17 @@ export enum CommandArgument {
   none = "none",
 }
 
+const findCommandErrorActions = assign<
+  CommandContext,
+  DoneInvokeEvent<TrompCommandProblem>
+>({
+  workspace: (_context, event: CommandErrorEvent) => {
+    return event.data.workspace
+  },
+  errorMessage: (_context, event: DoneInvokeEvent<TrompCommandProblem>) =>
+    event.data.message,
+})
+
 export type TrompCommandProblem =
   | { problem: "no_workspace"; message?: undefined; workspace?: undefined }
   | { problem: "no_editor"; message?: undefined; workspace: Uri }
@@ -21,6 +32,141 @@ export type TrompCommandProblem =
   | { problem: "config_invalid"; message: string; workspace: Uri }
   | { problem: "match_not_found"; message: string; workspace: Uri }
   | { problem: "nearest_not_found"; message: string; workspace: Uri }
+
+export interface ConfigContext {
+  workspace: Uri | undefined
+}
+
+export type ConfigEvent =
+  | { type: "EDIT" }
+  | { type: "DISMISS" }
+  | { type: "GENERATE" }
+
+export type ConfigState =
+  | { value: "initial"; context: ConfigContext }
+  | { value: "configNotFound"; context: ConfigContext }
+  | { value: "configInvalid"; context: ConfigContext }
+  | { value: "noWorkspace"; context: ConfigContext }
+  | { value: "generating"; context: ConfigContext }
+  | { value: "generationFailed"; context: ConfigContext }
+  | { value: "edit"; context: ConfigContext & { workspace: Uri } }
+
+export const configMachine = createMachine<
+  ConfigContext,
+  ConfigEvent,
+  ConfigState
+>({
+  id: "commandFinder",
+  initial: "started",
+  strict: true,
+  context: { workspace: undefined },
+  states: {
+    initial: {
+      invoke: {
+        src: "findCommand",
+        onDone: {
+          target: "complete",
+          actions: sendParent(
+            (_context: void, event: DoneInvokeEvent<string>) => {
+              return {
+                type: "COMMAND_FINDER.FOUND",
+                command: event.data,
+              }
+            }
+          ),
+        },
+        onError: [
+          {
+            target: "matchNotFound",
+            cond: function matchNotFound(_context, event: CommandErrorEvent) {
+              return event.data.problem === "match_not_found"
+            },
+            actions: findCommandErrorActions,
+          },
+          {
+            target: "configNotFound",
+            cond: function configNotFound(_context, event: CommandErrorEvent) {
+              return event.data && event.data.problem === "config_not_found"
+            },
+            actions: findCommandErrorActions,
+          },
+          {
+            target: "configInvalid",
+            cond: function configInvalid(_context, event) {
+              return event.data && event.data.problem === "config_invalid"
+            },
+            actions: findCommandErrorActions,
+          },
+          {
+            target: "noEditor",
+            cond: function noEditor(_context, event) {
+              return event.data && event.data.problem === "no_editor"
+            },
+            actions: findCommandErrorActions,
+          },
+          {
+            target: "noWorkspace",
+            cond: function noWorkspace(_context, event) {
+              return event.data && event.data.problem === "no_workspace"
+            },
+            actions: findCommandErrorActions,
+          },
+          {
+            target: "basicError",
+            actions: findCommandErrorActions,
+          },
+        ],
+      },
+    },
+    configNotFound: {
+      invoke: { src: "renderConfigNotFound" },
+      on: {
+        GENERATE: "generating",
+        DISMISS: "complete",
+      },
+    },
+    configInvalid: {
+      invoke: { src: "renderConfigInvalid" },
+      on: {
+        EDIT: "edit",
+        DISMISS: "complete",
+      },
+    },
+    edit: {
+      entry: "EDIT_CONFIG",
+      on: {
+        "": "complete",
+      },
+    },
+    generating: {
+      invoke: {
+        id: "generateConfig",
+        src: "generateConfig",
+        onDone: "complete",
+        onError: "generationFailed",
+      },
+    },
+    generationFailed: {
+      invoke: { src: "renderGenerationFailed" },
+      on: {
+        // RETRY: "generating",
+        DISMISS: "complete",
+      },
+    },
+    noWorkspace: {
+      invoke: { src: "renderNoWorkspace" },
+      on: {
+        DISMISS: "complete",
+      },
+    },
+    noEditor: {
+      invoke: { src: "renderNoEditor" },
+      on: {
+        DISMISS: "complete",
+      },
+    },
+  },
+})
 
 export interface CommandContext {
   id: number
@@ -46,20 +192,8 @@ export type CommandState =
   | { value: "noWorkspace"; context: CommandContext }
   | { value: "noEditor"; context: CommandContext }
   | { value: "complete"; context: CommandContext }
-  | { value: "openLink"; context: CommandContext }
 
 type CommandErrorEvent = DoneInvokeEvent<TrompCommandProblem>
-
-const findCommandErrorActions = assign<
-  CommandContext,
-  DoneInvokeEvent<TrompCommandProblem>
->({
-  workspace: (_context, event: CommandErrorEvent) => {
-    return event.data.workspace
-  },
-  errorMessage: (_context, event: DoneInvokeEvent<TrompCommandProblem>) =>
-    event.data.message,
-})
 
 export const commandMachine = createMachine<
   CommandContext,
@@ -77,6 +211,22 @@ export const commandMachine = createMachine<
   },
   states: {
     started: {
+      invoke: {
+        src: "getConfig",
+        onDone: [
+          {
+            target: "configured",
+            cond: (context, event) => {
+              return !!event.data.command
+            },
+          },
+          {
+            target: "complete",
+          },
+        ],
+      },
+    },
+    configured: {
       invoke: {
         src: "findCommand",
         onDone: {

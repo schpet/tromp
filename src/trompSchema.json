@@ -7,7 +7,7 @@
       "type": "array",
       "items": { "$ref": "#/definitions/commands" }
     },
-    "links": {
+    "bookmarks": {
       "additionalProperties": {
         "type": "string",
         "format": "uri"

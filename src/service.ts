@@ -155,17 +155,17 @@ export const buildTrompService = () => {
           }
 
           const config = configResult.value
-          const links = config.links || {}
-          const linkNames = Object.keys(links)
+          const bookmarks = config.bookmarks || {}
+          const bookmarkNames = Object.keys(bookmarks)
 
-          if (linkNames.length === 0) {
+          if (bookmarkNames.length === 0) {
             vscode.window.showErrorMessage(`No links in config`)
             return
           }
 
-          vscode.window.showQuickPick(linkNames).then(choice => {
+          vscode.window.showQuickPick(bookmarkNames).then(choice => {
             if (!choice) return
-            const link = links[choice]
+            const link = bookmarks[choice]
 
             vscode.commands.executeCommand(
               "vscode.open",

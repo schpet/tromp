@@ -11,7 +11,7 @@ export type ArgumentTypeUsedForLinesDefaultsToRspec = "rspec" | "jest"
 
 export interface TrompConfig {
   commands?: Commands[]
-  links?: {
+  bookmarks?: {
     [k: string]: string
   }
 }
