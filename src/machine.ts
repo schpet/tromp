@@ -7,6 +7,7 @@ import {
   sendParent,
   spawn,
 } from "xstate"
+import { TrompConfig } from "./types/trompSchema"
 
 export enum CommandArgument {
   file = "file",
@@ -35,6 +36,8 @@ export type TrompCommandProblem =
 
 export interface ConfigContext {
   workspace: Uri | undefined
+  errorMessage: string | undefined
+  config: TrompConfig | undefined
 }
 
 export type ConfigEvent =
@@ -56,65 +59,54 @@ export const configMachine = createMachine<
   ConfigEvent,
   ConfigState
 >({
-  id: "commandFinder",
-  initial: "started",
+  id: "config",
+  initial: "initial",
   strict: true,
-  context: { workspace: undefined },
+  context: { workspace: undefined, errorMessage: undefined, config: undefined },
   states: {
     initial: {
       invoke: {
-        src: "findCommand",
+        src: "getConfig",
         onDone: {
           target: "complete",
-          actions: sendParent(
-            (_context: void, event: DoneInvokeEvent<string>) => {
-              return {
-                type: "COMMAND_FINDER.FOUND",
-                command: event.data,
-              }
-            }
-          ),
+          actions: assign({
+            config: (_context, event) => {
+              return event.data
+            },
+          }),
         },
         onError: [
           {
-            target: "matchNotFound",
-            cond: function matchNotFound(_context, event: CommandErrorEvent) {
-              return event.data.problem === "match_not_found"
-            },
-            actions: findCommandErrorActions,
-          },
-          {
             target: "configNotFound",
-            cond: function configNotFound(_context, event: CommandErrorEvent) {
+            cond: function configNotFound(_context, event) {
               return event.data && event.data.problem === "config_not_found"
             },
-            actions: findCommandErrorActions,
+            actions: assign({
+              workspace: (_context, event) => event.data.workspace,
+              errorMessage: (_context, event) => event.data.message,
+            }),
           },
-          {
-            target: "configInvalid",
-            cond: function configInvalid(_context, event) {
-              return event.data && event.data.problem === "config_invalid"
-            },
-            actions: findCommandErrorActions,
-          },
-          {
-            target: "noEditor",
-            cond: function noEditor(_context, event) {
-              return event.data && event.data.problem === "no_editor"
-            },
-            actions: findCommandErrorActions,
-          },
-          {
-            target: "noWorkspace",
-            cond: function noWorkspace(_context, event) {
-              return event.data && event.data.problem === "no_workspace"
-            },
-            actions: findCommandErrorActions,
-          },
-          {
-            target: "basicError",
-            actions: findCommandErrorActions,
-          },
+          // {
+          //   target: "configInvalid",
+          //   cond: function configInvalid(_context, event) {
+          //     return event.data && event.data.problem === "config_invalid"
+          //   },
+          //   actions: findCommandErrorActions,
+          // },
+          // {
+          //   target: "noEditor",
+          //   cond: function noEditor(_context, event) {
+          //     return event.data && event.data.problem === "no_editor"
+          //   },
+          //   actions: findCommandErrorActions,
+          // },
+          // {
+          //   target: "noWorkspace",
+          //   cond: function noWorkspace(_context, event) {
+          //     return event.data && event.data.problem === "no_workspace"
+          //   },
+          //   actions: findCommandErrorActions,
+          // }
         ],
       },
     },
@@ -165,6 +157,13 @@ export const configMachine = createMachine<
         DISMISS: "complete",
       },
     },
+    complete: {
+      type: "final",
+      data: {
+        // TODO: remove type?
+        config: (context: ConfigContext) => context.config,
+      },
+    },
   },
 })
 
@@ -208,16 +207,17 @@ export const commandMachine = createMachine<
     workspace: undefined,
     errorMessage: undefined,
     id: -1, // <-- bad default? better way to handle context that comes in?
+    // TODO putconfig in context here
   },
   states: {
     started: {
       invoke: {
-        src: "getConfig",
+        src: "configMachine",
         onDone: [
           {
             target: "configured",
-            cond: (context, event) => {
-              return !!event.data.command
+            cond: (_context, event) => {
+              return !!event.data.config
             },
           },
           {
@@ -249,34 +249,6 @@ export const commandMachine = createMachine<
             actions: findCommandErrorActions,
           },
           {
-            target: "configNotFound",
-            cond: function configNotFound(_context, event: CommandErrorEvent) {
-              return event.data && event.data.problem === "config_not_found"
-            },
-            actions: findCommandErrorActions,
-          },
-          {
-            target: "configInvalid",
-            cond: function configInvalid(_context, event) {
-              return event.data && event.data.problem === "config_invalid"
-            },
-            actions: findCommandErrorActions,
-          },
-          {
-            target: "noEditor",
-            cond: function noEditor(_context, event) {
-              return event.data && event.data.problem === "no_editor"
-            },
-            actions: findCommandErrorActions,
-          },
-          {
-            target: "noWorkspace",
-            cond: function noWorkspace(_context, event) {
-              return event.data && event.data.problem === "no_workspace"
-            },
-            actions: findCommandErrorActions,
-          },
-          {
             target: "basicError",
             actions: findCommandErrorActions,
           },
@@ -287,42 +259,13 @@ export const commandMachine = createMachine<
       invoke: { src: "renderMatchNotFound" },
       on: {
         DISMISS: "complete",
-        EDIT: "edit",
-      },
-    },
-    configNotFound: {
-      invoke: { src: "renderConfigNotFound" },
-      on: {
-        GENERATE: "generating",
-        DISMISS: "complete",
-      },
-    },
-    configInvalid: {
-      invoke: { src: "renderConfigInvalid" },
-      on: {
-        EDIT: "edit",
-        DISMISS: "complete",
+        EDIT: "edit", // TODO: necessary to have a state for this?
       },
     },
     edit: {
       entry: "EDIT_CONFIG",
       on: {
         "": "complete",
-      },
-    },
-    generating: {
-      invoke: {
-        id: "generateConfig",
-        src: "generateConfig",
-        onDone: "complete",
-        onError: "generationFailed",
-      },
-    },
-    generationFailed: {
-      invoke: { src: "renderGenerationFailed" },
-      on: {
-        // RETRY: "generating",
-        DISMISS: "complete",
       },
     },
     noWorkspace: {

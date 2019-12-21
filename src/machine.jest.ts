@@ -5,12 +5,24 @@ import {
   commandMachine as commandMachinePlain,
   TrompCommandProblem,
   trompMachine,
+  configMachine,
 } from "./machine"
 
 it(`runs a command successfully`, done => {
+  const configMachineSetup = configMachine.withConfig({
+    services: {
+      getConfig: async () => {
+        return { todo: "put a config here" }
+      },
+    },
+  })
+
   const commandMachine = commandMachinePlain.withConfig({
     services: {
-      findCommand: async () => `yarn jest foo/bar/baz.test.js`,
+      configMachine: configMachineSetup,
+      findCommand: async () => {
+        return `yarn jest foo/bar/baz.test.js`
+      },
     },
   })
 
@@ -36,9 +48,9 @@ it(`runs a command successfully`, done => {
 })
 
 it(`invokes the config generation services`, done => {
-  const commandMachine = commandMachinePlain.withConfig({
+  const configMachineSetup = configMachine.withConfig({
     services: {
-      findCommand: () => {
+      getConfig: () => {
         const result: TrompCommandProblem = {
           problem: "config_not_found",
           message: "uh oh",
@@ -54,6 +66,12 @@ it(`invokes the config generation services`, done => {
         done()
         return Promise.resolve()
       },
+    },
+  })
+
+  const commandMachine = commandMachinePlain.withConfig({
+    services: {
+      configMachine: configMachineSetup,
     },
   })
 
