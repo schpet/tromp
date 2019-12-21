@@ -5,8 +5,8 @@ import {
   CommandContext,
   CommandEvent,
   commandMachine,
-  trompMachine,
-} from "./machine"
+  extensionMachine,
+} from "./extensionMachine"
 import {
   generateConfig,
   getCommandInContext,
@@ -131,9 +131,9 @@ export const buildTrompService = () => {
     },
   })
 
-  const machine = trompMachine
+  const machine = extensionMachine
     .withContext({
-      ...trompMachine.context!,
+      ...extensionMachine.context!,
       commandMachine: configuredCommandMachine,
     })
     .withConfig({

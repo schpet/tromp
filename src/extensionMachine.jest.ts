@@ -1,12 +1,12 @@
 import "jest"
 import { interpret } from "xstate"
+import { configMachine } from "./configMachine"
 import {
+  commandMachine,
   CommandArgument,
-  commandMachine as commandMachinePlain,
   TrompCommandProblem,
-  trompMachine,
-  configMachine,
-} from "./machine"
+} from "./commandMachine"
+import { extensionMachine } from "./extensionMachine"
 
 it(`runs a command successfully`, done => {
   const configMachineSetup = configMachine.withConfig({
@@ -17,7 +17,7 @@ it(`runs a command successfully`, done => {
     },
   })
 
-  const commandMachine = commandMachinePlain.withConfig({
+  const commandMachineSetup = commandMachine.withConfig({
     services: {
       configMachine: configMachineSetup,
       findCommand: async () => {
@@ -26,10 +26,10 @@ it(`runs a command successfully`, done => {
     },
   })
 
-  const machine = trompMachine
+  const machine = extensionMachine
     .withContext({
-      ...trompMachine.context!,
-      commandMachine,
+      ...extensionMachine.context!,
+      commandMachine: commandMachineSetup,
     })
     .withConfig({
       actions: {
@@ -69,16 +69,16 @@ it(`invokes the config generation services`, done => {
     },
   })
 
-  const commandMachine = commandMachinePlain.withConfig({
+  const commandMachineSetup = commandMachine.withConfig({
     services: {
       configMachine: configMachineSetup,
     },
   })
 
-  const machine = trompMachine
+  const machine = extensionMachine
     .withContext({
-      ...trompMachine.context!,
-      commandMachine,
+      ...extensionMachine.context!,
+      commandMachine: commandMachineSetup,
     })
     .withConfig({
       actions: {

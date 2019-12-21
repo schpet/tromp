@@ -4,7 +4,7 @@ import * as vscode from "vscode"
 import { failure, Result, success } from "./Result"
 import { decodeConfig, getCommand, TrompCommand } from "./config"
 import { TrompConfig } from "./types/trompSchema"
-import { TrompCommandProblem, CommandArgument } from "./machine"
+import { TrompCommandProblem, CommandArgument } from "./extensionMachine"
 import * as nearest from "./nearest"
 
 const getWorkspace = () => {
