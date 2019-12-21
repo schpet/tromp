@@ -1,7 +1,7 @@
 {
   "name": "tromp",
   "description": "run tests and arbitrary commands based on the file open",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "author": "Peter Schilling",
   "activationEvents": [
     "onCommand:tromp.runCommand",
