@@ -24,15 +24,15 @@ export function activate(context: vscode.ExtensionContext) {
   const runPreviousCommand = registerCommand("tromp.runPreviousCommand", () => {
     service.send({ type: "RUN_PREVIOUS" })
   })
-  const openLink = registerCommand("tromp.openLink", () => {
-    service.send({ type: "OPEN_LINK" })
+  const openBookmark = registerCommand("tromp.openBookmark", () => {
+    service.send({ type: "OPEN_BOOKMARK" })
   })
 
   context.subscriptions.push(runCommand)
   context.subscriptions.push(runCommandWithFile)
   context.subscriptions.push(runCommandWithNearest)
   context.subscriptions.push(runPreviousCommand)
-  context.subscriptions.push(openLink)
+  context.subscriptions.push(openBookmark)
 }
 
 // this method is called when your extension is deactivated

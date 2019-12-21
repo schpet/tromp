@@ -1,6 +1,6 @@
 import path from "path"
 import * as vscode from "vscode"
-import { interpret } from "xstate"
+import { interpret, createMachine } from "xstate"
 import { extensionMachine } from "./extensionMachine"
 import {
   generateConfig,
@@ -11,6 +11,7 @@ import {
 } from "./util"
 import { commandMachine } from "./commandMachine"
 import { configMachine } from "./configMachine"
+import { bookmarkMachine } from "./bookmarkMachine"
 
 export const buildTrompService = () => {
   const editConfig = (workspace: vscode.Uri | undefined) => {
@@ -153,6 +154,33 @@ export const buildTrompService = () => {
     },
   })
 
+  const configuredBookmarkMachine = bookmarkMachine.withConfig({
+    services: {
+      configMachine: configuredConfigMachine,
+      renderBookmarkList: async (context, event) => {
+        const config = context.config!
+        const bookmarks = config.bookmarks || {}
+        const bookmarkNames = Object.keys(bookmarks)
+
+        const choice = await vscode.window.showQuickPick(bookmarkNames)
+        if (!choice) return
+        const link = bookmarks[choice]
+        vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(link))
+      },
+      renderNoBookmarks: () => async callback => {
+        const choice = await vscode.window.showInformationMessage(
+          "No bookmarks to open",
+          "Edit tromp.json"
+        )
+        if (choice === "Edit tromp.json") return callback("EDIT")
+        callback("DISMISS")
+      },
+    },
+    actions: {
+      EDIT_CONFIG: context => editConfig(context.workspace),
+    },
+  })
+
   const machine = extensionMachine
     .withContext({
       ...extensionMachine.context!,
@@ -167,35 +195,7 @@ export const buildTrompService = () => {
         },
       },
       services: {
-        openLink: async () => {
-          throw new Error("todo!!!")
-          // const configResult = await getConfig()
-          // if (!configResult.ok) {
-          //   vscode.window.showErrorMessage(
-          //     `Problem with config: ${configResult.reason.problem}`
-          //   )
-          //   return
-          // }
-
-          // const config = configResult.value
-          // const bookmarks = config.bookmarks || {}
-          // const bookmarkNames = Object.keys(bookmarks)
-
-          // if (bookmarkNames.length === 0) {
-          //   vscode.window.showErrorMessage(`No links in config`)
-          //   return
-          // }
-
-          // vscode.window.showQuickPick(bookmarkNames).then(choice => {
-          //   if (!choice) return
-          //   const link = bookmarks[choice]
-
-          //   vscode.commands.executeCommand(
-          //     "vscode.open",
-          //     vscode.Uri.parse(link)
-          //   )
-          // })
-        },
+        bookmarkMachine: configuredBookmarkMachine,
       },
     })
 

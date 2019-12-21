@@ -21,7 +21,7 @@ export type ExtensionEvent =
   | { type: "COMMAND_FINDER.STARTED"; id: number }
   | { type: "COMMAND_FINDER.FOUND"; command: string }
   | { type: "COMMAND_FINDER.FINISHED"; id: number }
-  | { type: "OPEN_LINK" }
+  | { type: "OPEN_BOOKMARK" }
 
 export type ExtensionState =
   | { value: "idle"; context: ExtensionContext }
@@ -96,13 +96,12 @@ export const extensionMachine = createMachine<
               ),
           }),
         },
-        "OPEN_LINK": "openLink",
+        "OPEN_BOOKMARK": "openBookmark",
       },
     },
-    // TODO: openLink should be a machine that uses configmachine
-    openLink: {
+    openBookmark: {
       invoke: {
-        src: "openLink",
+        src: "bookmarkMachine",
         onDone: "idle",
       },
     },

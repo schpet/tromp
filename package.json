@@ -8,7 +8,7 @@
     "onCommand:tromp.runCommandWithFile",
     "onCommand:tromp.runCommandWithNearest",
     "onCommand:tromp.runPreviousCommand",
-    "onCommand:tromp.openLink"
+    "onCommand:tromp.openBookmark"
   ],
   "bugs": "https://github.com/schpet/tromp/issues",
   "categories": [
@@ -33,8 +33,8 @@
         "title": "Tromp: run previous command"
       },
       {
-        "command": "tromp.openLink",
-        "title": "Tromp: open a link"
+        "command": "tromp.openBookmark",
+        "title": "Tromp: open a bookmark"
       }
     ],
     "jsonValidation": [
