@@ -10,8 +10,9 @@
       "command": "yarn run schema"
     }
   ],
-  "links": {
+  "bookmarks": {
     "marketplace": "https://marketplace.visualstudio.com/items?itemName=schpet.tromp",
-    "github": "https://github.com/schpet/tromp"
+    "github": "https://github.com/schpet/tromp",
+    "prs": "https://github.com/schpet/tromp/pulls"
   }
 }
