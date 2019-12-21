@@ -68,7 +68,6 @@ export const commandMachine = createMachine<
     workspace: undefined,
     errorMessage: undefined,
     id: -1, // <-- bad default? better way to handle context that comes in?
-    // TODO putconfig in context here
   },
   states: {
     started: {
