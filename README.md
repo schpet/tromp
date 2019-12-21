@@ -9,6 +9,17 @@ also lets you quickly open bookmarks associated with a project:
 
 ![animation showing bookmarks](./images/bookmarks-animation.gif)
 
+## install
+
+quick open (<kbd>⌘P</kbd>) and enter the following:
+
+```
+ext install schpet.tromp
+```
+
+or grab it from  
+https://marketplace.visualstudio.com/items?itemName=schpet.tromp
+
 ### how it works
 
 reads a tromp.json config file that associates commands with glob matches, and
@@ -65,10 +76,6 @@ example tromp.json:
 - works with
   [Alternate File](https://marketplace.visualstudio.com/items?itemName=will-wow.vscode-alternate-file),
   e.g. if you want to run a test from the non-test code
-
-### install and setup
-
-https://marketplace.visualstudio.com/items?itemName=schpet.tromp
 
 #### regular keybindings
 
