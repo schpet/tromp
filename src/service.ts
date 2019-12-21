@@ -160,11 +160,18 @@ export const buildTrompService = () => {
       renderBookmarkList: async (context, event) => {
         const config = context.config!
         const bookmarks = config.bookmarks || {}
-        const bookmarkNames = Object.keys(bookmarks)
 
-        const choice = await vscode.window.showQuickPick(bookmarkNames)
+        const quickpickItems = Object.entries(bookmarks).map(
+          ([name, url]): vscode.QuickPickItem => ({
+            label: name,
+            description: url,
+          })
+        )
+
+        const choice = await vscode.window.showQuickPick(quickpickItems)
+
         if (!choice) return
-        const link = bookmarks[choice]
+        const link = bookmarks[choice.label]
         vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(link))
       },
       renderNoBookmarks: () => async callback => {
