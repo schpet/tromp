@@ -1,6 +1,6 @@
 import * as vscode from "vscode"
-import { CommandArgument } from "./extensionMachine"
 import { buildTrompService } from "./service"
+import { CommandArgument } from "./commandMachine"
 
 const { registerCommand } = vscode.commands
 

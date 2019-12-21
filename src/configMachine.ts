@@ -30,9 +30,25 @@ export const configMachine = createMachine<
   id: "config",
   initial: "initial",
   strict: true,
-  context: { workspace: undefined, errorMessage: undefined, config: undefined },
+  context: {
+    workspace: undefined,
+    errorMessage: undefined,
+    config: undefined,
+  },
   states: {
     initial: {
+      invoke: {
+        src: "getWorkspace",
+        onDone: {
+          target: "inWorkspace",
+          actions: assign({
+            workspace: (_context, event) => event.data,
+          }),
+        },
+        onError: "noWorkspace",
+      },
+    },
+    inWorkspace: {
       invoke: {
         src: "getConfig",
         onDone: {
@@ -50,31 +66,27 @@ export const configMachine = createMachine<
               return event.data && event.data.problem === "config_not_found"
             },
             actions: assign({
-              workspace: (_context, event) => event.data.workspace,
               errorMessage: (_context, event) => event.data.message,
             }),
           },
-          // {
-          //   target: "configInvalid",
-          //   cond: function configInvalid(_context, event) {
-          //     return event.data && event.data.problem === "config_invalid"
-          //   },
-          //   actions: findCommandErrorActions,
-          // },
-          // {
-          //   target: "noEditor",
-          //   cond: function noEditor(_context, event) {
-          //     return event.data && event.data.problem === "no_editor"
-          //   },
-          //   actions: findCommandErrorActions,
-          // },
-          // {
-          //   target: "noWorkspace",
-          //   cond: function noWorkspace(_context, event) {
-          //     return event.data && event.data.problem === "no_workspace"
-          //   },
-          //   actions: findCommandErrorActions,
-          // }
+          {
+            target: "configInvalid",
+            cond: function configInvalid(_context, event) {
+              return event.data && event.data.problem === "config_invalid"
+            },
+            actions: assign({
+              errorMessage: (_context, event) => event.data.message,
+            }),
+          },
+          {
+            target: "noEditor",
+            cond: function noEditor(_context, event) {
+              return event.data && event.data.problem === "no_editor"
+            },
+            actions: assign({
+              errorMessage: (_context, event) => event.data.message,
+            }),
+          },
         ],
       },
     },
@@ -130,6 +142,7 @@ export const configMachine = createMachine<
       data: {
         // TODO: remove type?
         config: (context: ConfigContext) => context.config,
+        workspace: (context: ConfigContext) => context.workspace,
       },
     },
   },

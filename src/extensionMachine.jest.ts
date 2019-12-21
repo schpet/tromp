@@ -11,16 +11,15 @@ import { extensionMachine } from "./extensionMachine"
 it(`runs a command successfully`, done => {
   const configMachineSetup = configMachine.withConfig({
     services: {
-      getConfig: async () => {
-        return { todo: "put a config here" }
-      },
+      getWorkspace: async () => ({ todo: "make a fake vscode uri?" }),
+      getConfig: async () => ({ todo: "make a fake config?" }),
     },
   })
 
   const commandMachineSetup = commandMachine.withConfig({
     services: {
       configMachine: configMachineSetup,
-      findCommand: async () => {
+      findCommand: async (_context, _event) => {
         return `yarn jest foo/bar/baz.test.js`
       },
     },
@@ -50,6 +49,7 @@ it(`runs a command successfully`, done => {
 it(`invokes the config generation services`, done => {
   const configMachineSetup = configMachine.withConfig({
     services: {
+      getWorkspace: async () => ({ todo: "make a fake vscode uri?" }),
       getConfig: () => {
         const result: TrompCommandProblem = {
           problem: "config_not_found",

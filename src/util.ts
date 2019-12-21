@@ -1,27 +1,22 @@
-import { promises as fs, existsSync } from "fs"
+import { existsSync, promises as fs } from "fs"
 import * as path from "path"
 import * as vscode from "vscode"
-import { failure, Result, success } from "./Result"
 import { decodeConfig, getCommand, TrompCommand } from "./config"
-import { TrompConfig } from "./types/trompSchema"
-import { TrompCommandProblem, CommandArgument } from "./extensionMachine"
 import * as nearest from "./nearest"
+import { failure, Result, success } from "./Result"
+import { TrompConfig } from "./types/trompSchema"
+import { TrompCommandProblem, CommandArgument } from "./commandMachine"
 
-const getWorkspace = () => {
+export const getWorkspace = () => {
   const { workspaceFolders } = vscode.workspace
-  const workspaceRoot = workspaceFolders && workspaceFolders[0]
-  if (!workspaceRoot) return
-  return workspaceRoot.uri
+  const firstWorkspace = workspaceFolders && workspaceFolders[0]
+  if (!firstWorkspace) return
+  return firstWorkspace.uri
 }
 
-export async function getConfig(): Promise<
-  Result<TrompConfig, TrompCommandProblem>
-> {
-  const workspace = getWorkspace()
-  if (!workspace) {
-    return failure({ problem: "no_workspace" })
-  }
-
+export async function getConfig(
+  workspace: vscode.Uri
+): Promise<Result<TrompConfig, TrompCommandProblem>> {
   const configFsPath = path.join(workspace.fsPath, "tromp.json")
 
   let configBuffer
@@ -49,17 +44,10 @@ export async function getConfig(): Promise<
 }
 
 export async function getCommandInContext(
-  mode: CommandArgument
+  mode: CommandArgument,
+  workspace: vscode.Uri,
+  trompConfig: TrompConfig
 ): Promise<Result<TrompCommand, TrompCommandProblem>> {
-  const workspace = getWorkspace()
-  if (!workspace) {
-    return failure({ problem: "no_workspace" })
-  }
-
-  const trompConfigResult = await getConfig()
-  if (!trompConfigResult.ok) return trompConfigResult
-
-  const trompConfig = trompConfigResult.value
   const editor = vscode.window.activeTextEditor
   if (!editor) {
     return failure({
@@ -120,6 +108,7 @@ export async function getCommandInContext(
       throw new Error(`invariant: unexpected argument ${mode}`)
   }
 }
+
 export function trompTerminal(terminalName = "Tromp") {
   return (
     vscode.window.terminals.find(terminal => terminal.name === terminalName) ||

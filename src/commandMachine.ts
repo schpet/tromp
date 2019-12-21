@@ -1,5 +1,6 @@
 import { Uri } from "vscode"
 import { assign, createMachine, DoneInvokeEvent, sendParent } from "xstate"
+import { TrompConfig } from "./types/trompSchema"
 
 export enum CommandArgument {
   file = "file",
@@ -8,7 +9,6 @@ export enum CommandArgument {
 }
 
 export type TrompCommandProblem =
-  | { problem: "no_workspace"; message?: undefined; workspace?: undefined }
   | { problem: "no_editor"; message?: undefined; workspace: Uri }
   | { problem: "config_not_found"; message: string; workspace: Uri }
   | { problem: "config_invalid"; message: string; workspace: Uri }
@@ -30,7 +30,13 @@ export interface CommandContext {
   id: number
   errorMessage: string | undefined
   workspace: Uri | undefined
+  config: TrompConfig | undefined
   argument: CommandArgument
+}
+
+type CommandContextConfigured = CommandContext & {
+  workspace: Uri
+  config: TrompConfig
 }
 
 export type CommandEvent =
@@ -41,14 +47,9 @@ export type CommandEvent =
 
 export type CommandState =
   | { value: "started"; context: CommandContext }
-  | { value: "matchNotFound"; context: CommandContext }
-  | { value: "configNotFound"; context: CommandContext }
-  | { value: "configInvalid"; context: CommandContext }
-  | { value: "edit"; context: CommandContext & { workspace: Uri } }
-  | { value: "generating"; context: CommandContext }
-  | { value: "generationFailed"; context: CommandContext }
-  | { value: "noWorkspace"; context: CommandContext }
-  | { value: "noEditor"; context: CommandContext }
+  | { value: "matchNotFound"; context: CommandContextConfigured }
+  | { value: "edit"; context: CommandContextConfigured }
+  | { value: "noEditor"; context: CommandContextConfigured }
   | { value: "complete"; context: CommandContext }
 
 type CommandErrorEvent = DoneInvokeEvent<TrompCommandProblem>
@@ -63,6 +64,7 @@ export const commandMachine = createMachine<
   strict: true,
   context: {
     argument: CommandArgument.none,
+    config: undefined,
     workspace: undefined,
     errorMessage: undefined,
     id: -1, // <-- bad default? better way to handle context that comes in?
@@ -76,8 +78,12 @@ export const commandMachine = createMachine<
           {
             target: "configured",
             cond: (_context, event) => {
-              return !!event.data.config
+              return !!(event.data.config && event.data.workspace)
             },
+            actions: assign({
+              config: (_context, event) => event.data.config,
+              workspace: (_context, event) => event.data.workspace,
+            }),
           },
           {
             target: "complete",

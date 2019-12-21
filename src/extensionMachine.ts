@@ -99,8 +99,7 @@ export const extensionMachine = createMachine<
         "OPEN_LINK": "openLink",
       },
     },
-    // this is disappointing, should be able to spawn a machine that finds and
-    // generates a config
+    // TODO: openLink should be a machine that uses configmachine
     openLink: {
       invoke: {
         src: "openLink",
