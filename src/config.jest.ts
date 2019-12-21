@@ -33,10 +33,10 @@ describe(`decodeConfig`, () => {
     `)
   })
 
-  describe(`links`, () => {
-    it(`allows links`, () => {
+  describe(`bookmarks`, () => {
+    it(`allows bookmarks`, () => {
       const config = JSON.stringify({
-        links: {
+        bookmarks: {
           foo: "https://foo.biz",
           bar: "https://bar.ca",
           baz: "file:///tmp/foo",
@@ -51,8 +51,8 @@ describe(`decodeConfig`, () => {
 
     it(`validates uris`, () => {
       const config = JSON.stringify({
-        links: {
-          foo: "not a link",
+        bookmarks: {
+          foo: "not a bookmark",
         },
       })
 
