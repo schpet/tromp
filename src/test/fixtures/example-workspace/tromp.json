@@ -8,5 +8,8 @@
       "command": "node",
       "match": "**/*.js"
     }
-  ]
+  ],
+  "bookmarks": {
+    "foo": "https://example.com/foo"
+  }
 }

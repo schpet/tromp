@@ -10,7 +10,6 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "noErrorTruncation": true,
     "noFallthroughCasesInSwitch": true
   },
   "exclude": ["node_modules", ".vscode-test"]

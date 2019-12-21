@@ -1,27 +1,23 @@
-import { promises as fs, existsSync } from "fs"
+import { existsSync, promises as fs } from "fs"
 import * as path from "path"
 import * as vscode from "vscode"
-import { failure, Result, success } from "./Result"
 import { decodeConfig, getCommand, TrompCommand } from "./config"
-import { TrompConfig } from "./types/trompSchema"
-import { TrompCommandProblem, CommandArgument } from "./machine"
 import * as nearest from "./nearest"
+import { failure, Result, success } from "./Result"
+import { TrompConfig } from "./types/trompSchema"
+import { TrompCommandProblem, CommandArgument } from "./commandMachine"
+import { TrompConfigProblem } from "./configMachine"
 
-const getWorkspace = () => {
+export const getWorkspace = () => {
   const { workspaceFolders } = vscode.workspace
-  const workspaceRoot = workspaceFolders && workspaceFolders[0]
-  if (!workspaceRoot) return
-  return workspaceRoot.uri
+  const firstWorkspace = workspaceFolders && workspaceFolders[0]
+  if (!firstWorkspace) return
+  return firstWorkspace.uri
 }
 
-export async function getCommandInContext(
-  mode: CommandArgument
-): Promise<Result<TrompCommand, TrompCommandProblem>> {
-  const workspace = getWorkspace()
-  if (!workspace) {
-    return failure({ problem: "no_workspace" })
-  }
-
+export async function getConfig(
+  workspace: vscode.Uri
+): Promise<Result<TrompConfig, TrompConfigProblem>> {
   const configFsPath = path.join(workspace.fsPath, "tromp.json")
 
   let configBuffer
@@ -45,8 +41,14 @@ export async function getCommandInContext(
     })
   }
 
-  const trompConfig = trompConfigResult.value
+  return trompConfigResult
+}
 
+export async function getCommandInContext(
+  mode: CommandArgument,
+  workspace: vscode.Uri,
+  trompConfig: TrompConfig
+): Promise<Result<TrompCommand, TrompCommandProblem>> {
   const editor = vscode.window.activeTextEditor
   if (!editor) {
     return failure({
@@ -107,6 +109,7 @@ export async function getCommandInContext(
       throw new Error(`invariant: unexpected argument ${mode}`)
   }
 }
+
 export function trompTerminal(terminalName = "Tromp") {
   return (
     vscode.window.terminals.find(terminal => terminal.name === terminalName) ||

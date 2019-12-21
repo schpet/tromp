@@ -15,7 +15,9 @@ export function findCommand(
   trompConfig: TrompConfig,
   targetFsPathRelative: string
 ): Commands | undefined {
-  return trompConfig.commands.find(configTestEntry =>
+  const { commands } = trompConfig
+  if (!commands) return undefined
+  return commands.find(configTestEntry =>
     minimatch(targetFsPathRelative, configTestEntry.match)
   )
 }

@@ -1,23 +1,34 @@
 import "jest"
 import { interpret } from "xstate"
+import { configMachine, TrompConfigProblem } from "./configMachine"
 import {
+  commandMachine,
   CommandArgument,
-  commandMachine as commandMachinePlain,
   TrompCommandProblem,
-  trompMachine,
-} from "./machine"
+} from "./commandMachine"
+import { extensionMachine } from "./extensionMachine"
 
 it(`runs a command successfully`, done => {
-  const commandMachine = commandMachinePlain.withConfig({
+  const configMachineSetup = configMachine.withConfig({
     services: {
-      findCommand: async () => `yarn jest foo/bar/baz.test.js`,
+      getWorkspace: async () => ({ todo: "make a fake vscode uri?" }),
+      getConfig: async () => ({ todo: "make a fake config?" }),
     },
   })
 
-  const machine = trompMachine
+  const commandMachineSetup = commandMachine.withConfig({
+    services: {
+      configMachine: configMachineSetup,
+      findCommand: async (_context, _event) => {
+        return `yarn jest foo/bar/baz.test.js`
+      },
+    },
+  })
+
+  const machine = extensionMachine
     .withContext({
-      ...trompMachine.context!,
-      commandMachine,
+      ...extensionMachine.context!,
+      commandMachine: commandMachineSetup,
     })
     .withConfig({
       actions: {
@@ -36,10 +47,11 @@ it(`runs a command successfully`, done => {
 })
 
 it(`invokes the config generation services`, done => {
-  const commandMachine = commandMachinePlain.withConfig({
+  const configMachineSetup = configMachine.withConfig({
     services: {
-      findCommand: () => {
-        const result: TrompCommandProblem = {
+      getWorkspace: async () => ({ todo: "make a fake vscode uri?" }),
+      getConfig: () => {
+        const result: TrompConfigProblem = {
           problem: "config_not_found",
           message: "uh oh",
           workspace: null as any,
@@ -57,10 +69,16 @@ it(`invokes the config generation services`, done => {
     },
   })
 
-  const machine = trompMachine
+  const commandMachineSetup = commandMachine.withConfig({
+    services: {
+      configMachine: configMachineSetup,
+    },
+  })
+
+  const machine = extensionMachine
     .withContext({
-      ...trompMachine.context!,
-      commandMachine,
+      ...extensionMachine.context!,
+      commandMachine: commandMachineSetup,
     })
     .withConfig({
       actions: {

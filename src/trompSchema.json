@@ -6,9 +6,16 @@
     "commands": {
       "type": "array",
       "items": { "$ref": "#/definitions/commands" }
+    },
+    "bookmarks": {
+      "additionalProperties": {
+        "type": "string",
+        "format": "uri"
+      },
+      "type": "object"
     }
   },
-  "required": ["commands"],
+  "required": [],
   "definitions": {
     "commands": {
       "type": "object",
