@@ -10,8 +10,6 @@ export enum CommandArgument {
 
 export type TrompCommandProblem =
   | { problem: "no_editor"; message?: undefined; workspace: Uri }
-  | { problem: "config_not_found"; message: string; workspace: Uri }
-  | { problem: "config_invalid"; message: string; workspace: Uri }
   | { problem: "match_not_found"; message: string; workspace: Uri }
   | { problem: "nearest_not_found"; message: string; workspace: Uri }
 

@@ -1,6 +1,6 @@
 import "jest"
 import { interpret } from "xstate"
-import { configMachine } from "./configMachine"
+import { configMachine, TrompConfigProblem } from "./configMachine"
 import {
   commandMachine,
   CommandArgument,
@@ -51,7 +51,7 @@ it(`invokes the config generation services`, done => {
     services: {
       getWorkspace: async () => ({ todo: "make a fake vscode uri?" }),
       getConfig: () => {
-        const result: TrompCommandProblem = {
+        const result: TrompConfigProblem = {
           problem: "config_not_found",
           message: "uh oh",
           workspace: null as any,

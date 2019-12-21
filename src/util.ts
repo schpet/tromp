@@ -6,6 +6,7 @@ import * as nearest from "./nearest"
 import { failure, Result, success } from "./Result"
 import { TrompConfig } from "./types/trompSchema"
 import { TrompCommandProblem, CommandArgument } from "./commandMachine"
+import { TrompConfigProblem } from "./configMachine"
 
 export const getWorkspace = () => {
   const { workspaceFolders } = vscode.workspace
@@ -16,7 +17,7 @@ export const getWorkspace = () => {
 
 export async function getConfig(
   workspace: vscode.Uri
-): Promise<Result<TrompConfig, TrompCommandProblem>> {
+): Promise<Result<TrompConfig, TrompConfigProblem>> {
   const configFsPath = path.join(workspace.fsPath, "tromp.json")
 
   let configBuffer

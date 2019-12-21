@@ -1,5 +1,5 @@
 import { Uri } from "vscode"
-import { assign, createMachine } from "xstate"
+import { assign, createMachine, DoneInvokeEvent } from "xstate"
 import { TrompConfig } from "./types/trompSchema"
 
 export interface ConfigContext {
@@ -7,6 +7,14 @@ export interface ConfigContext {
   errorMessage: string | undefined
   config: TrompConfig | undefined
 }
+
+export type TrompConfigProblem =
+  | {
+      problem: "config_invalid"
+      message: string
+      workspace: Uri
+    }
+  | { problem: "config_not_found"; message: string; workspace: Uri }
 
 export type ConfigEvent =
   | { type: "EDIT" }
@@ -62,16 +70,23 @@ export const configMachine = createMachine<
         onError: [
           {
             target: "configNotFound",
-            cond: function configNotFound(_context, event) {
+            cond: function configNotFound(
+              _context,
+              event: DoneInvokeEvent<TrompConfigProblem>
+            ) {
               return event.data && event.data.problem === "config_not_found"
             },
             actions: assign({
+              // TODO types
               errorMessage: (_context, event) => event.data.message,
             }),
           },
           {
             target: "configInvalid",
-            cond: function configInvalid(_context, event) {
+            cond: function configInvalid(
+              _context,
+              event: DoneInvokeEvent<TrompConfigProblem>
+            ) {
               return event.data && event.data.problem === "config_invalid"
             },
             actions: assign({
