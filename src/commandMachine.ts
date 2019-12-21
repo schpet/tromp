@@ -113,6 +113,15 @@ export const commandMachine = createMachine<
             actions: findCommandErrorActions,
           },
           {
+            target: "noEditor",
+            cond: function noEditor(_context, event) {
+              return event.data && event.data.problem === "no_editor"
+            },
+            actions: assign({
+              errorMessage: (_context, event) => event.data.message,
+            }),
+          },
+          {
             target: "basicError",
             actions: findCommandErrorActions,
           },
@@ -130,12 +139,6 @@ export const commandMachine = createMachine<
       entry: "EDIT_CONFIG",
       on: {
         "": "complete",
-      },
-    },
-    noWorkspace: {
-      invoke: { src: "renderNoWorkspace" },
-      on: {
-        DISMISS: "complete",
       },
     },
     noEditor: {

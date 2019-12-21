@@ -78,15 +78,6 @@ export const configMachine = createMachine<
               errorMessage: (_context, event) => event.data.message,
             }),
           },
-          {
-            target: "noEditor",
-            cond: function noEditor(_context, event) {
-              return event.data && event.data.problem === "no_editor"
-            },
-            actions: assign({
-              errorMessage: (_context, event) => event.data.message,
-            }),
-          },
         ],
       },
     },
