@@ -69,7 +69,7 @@ example tromp.json:
 - **tromp.runPreviousCommand**  
   run the previously executed command again
 - **tromp.openBookmark**  
-  run the previously executed command again
+  pop open your list of bookmarks (similar UI as opening a file via cmd-p)
 
 ### other notes
 
