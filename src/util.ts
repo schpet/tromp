@@ -122,8 +122,8 @@ export async function runTerminalCommand(cmd: string) {
 
   terminal.show(true)
 
-  // would be nicer to keep scroll-back history
-  await vscode.commands.executeCommand("workbench.action.terminal.clear")
+  // this seems to move focus to the terminal (undesirable)
+  // await vscode.commands.executeCommand("workbench.action.terminal.clear")
 
   terminal.sendText(cmd)
 }

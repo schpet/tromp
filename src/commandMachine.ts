@@ -93,14 +93,12 @@ export const commandMachine = createMachine<
         src: "findCommand",
         onDone: {
           target: "complete",
-          actions: sendParent(
-            (_context: void, event: DoneInvokeEvent<string>) => {
-              return {
-                type: "COMMAND_FINDER.FOUND",
-                command: event.data,
-              }
+          actions: sendParent((_context, event: DoneInvokeEvent<string>) => {
+            return {
+              type: "COMMAND_FINDER.FOUND",
+              command: event.data,
             }
-          ),
+          }),
         },
         onError: [
           {
@@ -153,7 +151,7 @@ export const commandMachine = createMachine<
     },
     complete: {
       type: "final",
-      entry: sendParent((context: { id: string }) => ({
+      entry: sendParent(context => ({
         type: "COMMAND_FINDER.FINISHED",
         id: context.id,
       })),
