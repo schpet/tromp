@@ -75,7 +75,7 @@
   },
   "displayName": "tromp",
   "engines": {
-    "vscode": "^1.40.0"
+    "vscode": "^1.47.2"
   },
   "homepage": "https://github.com/schpet/tromp",
   "keywords": [
