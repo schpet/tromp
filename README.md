@@ -107,3 +107,10 @@ update your settings.json with something like this
   ]
 }
 ```
+
+### Publishing
+
+- ensure vsce is installed (npm i -g vsce)
+- `vsce package && vsce publish`
+- if asked for a token, visit https://dev.azure.com/tromp/_usersSettings/tokens
+  for a token, hit "regenerate"
